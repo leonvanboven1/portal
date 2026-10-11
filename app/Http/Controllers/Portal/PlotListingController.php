@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Portal;
 
 use App\Http\Controllers\Controller;
 use App\Models\PlotListing;
-use App\Models\PlotListingSetting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Services\Plugin\BankingService;
@@ -76,11 +75,7 @@ class PlotListingController extends Controller
         $validated = $request->validate([
             'price' => 'required|numeric|min:0',
             'description' => 'required|string|max:1000',
-<<<<<<< HEAD
-            'image' => 'nullable|image|max:'.PlotListingSetting::current()->max_image_kb(),
-=======
             'image' => 'nullable|image|max:'.Portal::maxUploadKilobytes(),
->>>>>>> 8c5a4f577ae86b4bda059ad4e06acc16b3371cb0
             'instant_buy' => 'nullable|boolean',
             'payout_bank_account_uuid' => 'required|string'
         ]);
