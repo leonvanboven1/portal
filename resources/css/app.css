@@ -143,6 +143,23 @@
 .omt-account-state { display: inline-flex; align-items: center; gap: 7px; color: #dce8d5; }
 .omt-account-state span { width: 6px; height: 6px; }
 
+.omt-plot-admin-hero { display: flex; align-items: center; justify-content: space-between; gap: 24px; border: 1px solid #304338; border-radius: 9px; padding: 24px 28px; background: var(--omt-rail); color: #f5f8f2; }
+.omt-plot-admin-copy { min-width: 0; }
+.omt-plot-admin-copy h2 { margin-top: 6px; color: #fff; font-size: 23px; font-weight: 700; line-height: 1.2; }
+.omt-plot-admin-copy > p:last-child { margin-top: 7px; color: #b5c2b7; font-size: 12px; line-height: 1.5; }
+.omt-plot-admin-metrics { display: flex; flex: none; gap: 0; border: 1px solid rgb(255 255 255 / 12%); border-radius: 7px; background: rgb(255 255 255 / 4%); }
+.omt-plot-admin-metrics > div { min-width: 88px; padding: 10px 14px; }
+.omt-plot-admin-metrics > div + div { border-left: 1px solid rgb(255 255 255 / 12%); }
+.omt-plot-admin-metrics dt { color: #9eada1; font-family: "JetBrains Mono", monospace; font-size: 8px; }
+.omt-plot-admin-metrics dd { margin-top: 5px; color: #f4f8f1; font-size: 17px; font-weight: 700; }
+.omt-selection-hint { color: var(--omt-muted); font-size: 10px; line-height: 1.5; }
+.omt-selection-hint kbd { border: 1px solid var(--omt-line); border-bottom-width: 2px; border-radius: 4px; padding: 1px 4px; background: var(--omt-page); color: var(--omt-ink); font-family: "JetBrains Mono", monospace; font-size: 9px; }
+.omt-plot-row { transition: background-color 120ms ease; }
+.omt-plot-row-selected { background: #eff6dc !important; }
+.dark .omt-plot-row-selected { background: #29361f !important; }
+.omt-plot-row-selected td:first-child input { outline: 2px solid rgb(var(--accent-400) / 48%); outline-offset: 2px; }
+.omt-plot-row:hover:not(.omt-plot-row-selected) { background: color-mix(in srgb, var(--omt-page) 72%, var(--omt-surface)); }
+
 /* Existing Blade pages use Tailwind utilities; these shared refinements unify their surfaces. */
 .omt-main-content [class~="bg-white"][class~="rounded-lg"] { border: 1px solid var(--omt-line); background-color: var(--omt-surface); box-shadow: 0 8px 24px rgb(26 45 31 / 4%); }
 .dark .omt-main-content [class~="dark:bg-gray-800"] { border-color: var(--omt-line); background-color: var(--omt-surface); box-shadow: 0 8px 24px rgb(0 0 0 / 12%); }
@@ -179,6 +196,8 @@
 }
 
 @media (max-width: 767px) {
+    .omt-plot-admin-hero { align-items: stretch; flex-direction: column; gap: 18px; padding: 19px; }
+    .omt-plot-admin-metrics > div { min-width: 0; flex: 1; padding: 9px 11px; }
     .omt-dashboard-intro { min-height: 145px; padding: 20px; }
     .omt-dashboard-avatar-wrap { width: 60px; height: 60px; border-radius: 11px; }
     .omt-dashboard-avatar { width: 44px; height: 44px; }
@@ -194,6 +213,8 @@
 }
 
 @media (max-width: 420px) {
+    .omt-plot-admin-metrics dt { font-size: 7px; }
+    .omt-plot-admin-metrics dd { font-size: 15px; }
     .omt-dashboard-intro { align-items: flex-start; gap: 10px; padding: 16px 13px; }
     .omt-dashboard-intro > .flex { gap: 10px; }
     .omt-dashboard-avatar-wrap { width: 48px; height: 48px; }

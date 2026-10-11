@@ -6,26 +6,45 @@
 @section('content')
     @php($allNames = collect($plots)->pluck('name')->values())
     <div class="space-y-6">
-        <!-- Stats Overview -->
-        <div class="grid grid-cols-1 gap-5 sm:grid-cols-3">
-            <!-- Total Plots -->
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm rounded-lg">
-                <div class="p-6">
-                    <div class="flex items-center">
-                        <div class="flex-shrink-0 p-3 bg-blue-100 dark:bg-blue-500/10 rounded-lg">
-                            <x-heroicon-s-map class="h-6 w-6 text-blue-600 dark:text-blue-400" />
-                        </div>
-                        <div class="ml-4">
-                            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">Totaal Plots</h3>
-                            <p class="text-2xl font-semibold text-gray-900 dark:text-white">{{ number_format(count($plots)) }}</p>
-                        </div>
-                    </div>
-                </div>
+        <section class="omt-plot-admin-hero">
+            <div class="omt-plot-admin-copy">
+                <p class="omt-eyebrow">BEHEER / VASTGOED</p>
+                <h2>Alle plots</h2>
+                <p>Beheer kavels en selecteer eenvoudig meerdere plots voor de makelaar.</p>
             </div>
-        </div>
+            <dl class="omt-plot-admin-metrics">
+                <div><dt>TOTAAL</dt><dd>{{ number_format(count($plots)) }}</dd></div>
+                <div><dt>TE KOOP</dt><dd>{{ $listedPlotNames->count() }}</dd></div>
+                <div><dt>TE HUUR</dt><dd>{{ $rentalPlotNames->count() }}</dd></div>
+            </dl>
+        </section>
 
         <!-- Plots Table -->
-        <form method="GET" action="{{ route('portal.admin.plots.bulk.create') }}" x-data="{ selected: [], all: @js($allNames) }"
+        <form method="GET" action="{{ route('portal.admin.plots.bulk.create') }}" x-data="{
+                  selected: [],
+                  all: @js($allNames),
+                  lastClickedIndex: null,
+                  togglePlot(event, name) {
+                      const index = this.all.indexOf(name);
+                      const shouldSelect = !event.target.checked;
+
+                      if (event.shiftKey && this.lastClickedIndex !== null) {
+                          const start = Math.min(this.lastClickedIndex, index);
+                          const end = Math.max(this.lastClickedIndex, index);
+                          const range = this.all.slice(start, end + 1);
+                          this.selected = [...new Set([...this.selected, ...range])];
+                      } else {
+                          this.selected = shouldSelect
+                              ? [...new Set([...this.selected, name])]
+                              : this.selected.filter((plot) => plot !== name);
+                          this.lastClickedIndex = index;
+                      }
+                  },
+                  toggleAll(event) {
+                      this.selected = event.target.checked ? [...this.all] : [];
+                      this.lastClickedIndex = null;
+                  }
+              }"
               class="bg-white dark:bg-gray-800 shadow-sm rounded-lg">
             <div class="px-4 py-5 sm:px-6 border-b border-gray-200 dark:border-gray-700 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div>
@@ -33,6 +52,9 @@
                     <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
                         Overzicht van alle plots{{ $brokerEnabled ? '. Selecteer plots om ze samen namens '.config('app.name').' te verkopen of te verhuren.' : '' }}
                     </p>
+                    @if($brokerEnabled)
+                        <p class="omt-selection-hint mt-2">Klik een plot aan. Houd <kbd>Shift</kbd> ingedrukt en klik een ander plot om de tussenliggende reeks te selecteren.</p>
+                    @endif
                 </div>
                 @if($brokerEnabled)
                     <button type="submit" x-show="selected.length" x-cloak
@@ -53,7 +75,7 @@
                                         <th scope="col" class="w-10 py-3.5 pl-4 sm:pl-3">
                                             <input type="checkbox" aria-label="Alle plots selecteren"
                                                    :checked="all.length && selected.length === all.length"
-                                                   @change="selected = $event.target.checked ? [...all] : []"
+                                                           @change="toggleAll($event)"
                                                    class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-700">
                                         </th>
                                     @endif
@@ -67,10 +89,12 @@
                             </thead>
                             <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                                 @forelse($plots as $plot)
-                                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50">
+                                    <tr class="omt-plot-row" :class="{ 'omt-plot-row-selected': selected.includes(@js($plot['name'])) }">
                                         @if($brokerEnabled)
                                             <td class="w-10 py-4 pl-4 sm:pl-3">
-                                                <input type="checkbox" name="plots[]" value="{{ $plot['name'] }}" x-model="selected"
+                                                <input type="checkbox" name="plots[]" value="{{ $plot['name'] }}"
+                                                       :checked="selected.includes(@js($plot['name']))"
+                                                       @click.prevent="togglePlot($event, @js($plot['name']))"
                                                        aria-label="{{ $plot['name'] }} selecteren"
                                                        class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-700">
                                             </td>
