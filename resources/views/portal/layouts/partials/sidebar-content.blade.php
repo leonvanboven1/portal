@@ -1,16 +1,19 @@
 @php
     $user = auth()->user();
-    $heading = 'px-2 pb-1 pt-6 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400';
+    $heading = 'omt-nav-heading px-2 pb-1 pt-6 text-xs font-semibold uppercase';
     // can() also checks the permission's feature, see AppServiceProvider.
     $can = fn (string ...$permissions) => collect($permissions)->contains(fn ($permission) => $user->can($permission));
 @endphp
 
-<a href="{{ route('dashboard') }}" class="omt-hop flex h-16 shrink-0 items-center gap-3 text-base font-bold tracking-tight text-gray-900 dark:text-white">
-    <x-portal.logo />
-    <span class="truncate">{{ config('app.name') }}</span>
+<a href="{{ route('dashboard') }}" class="omt-brand-lockup omt-hop flex h-[5.5rem] shrink-0 items-center gap-3 text-base font-bold">
+    <span class="omt-brand-mark"><x-portal.logo /></span>
+    <span class="min-w-0">
+        <span class="omt-brand-name block truncate">{{ config('app.name') }}</span>
+        <span class="omt-brand-caption block">STADSPORTAAL</span>
+    </span>
 </a>
 
-<nav class="flex flex-1 flex-col" aria-label="Portaal">
+<nav class="omt-navigation flex flex-1 flex-col" aria-label="Portaal">
     <ul role="list" class="space-y-0.5">
         <x-portal.nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" icon="home">Overzicht</x-portal.nav-link>
         @if ($can('use-bank'))

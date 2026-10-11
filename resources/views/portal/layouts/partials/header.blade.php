@@ -1,17 +1,19 @@
-<header class="sticky top-0 z-30 border-b border-gray-200 bg-white/90 backdrop-blur dark:border-gray-800 dark:bg-gray-900/90">
-    <div class="mx-auto flex h-16 max-w-6xl items-center gap-x-4 px-4 sm:px-6 lg:px-8">
-        <button type="button" @click="sidebarOpen = true" class="-ml-2 rounded-md p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-white lg:hidden">
+@php($pageHeading = trim($__env->yieldContent('header')) ?: trim($__env->yieldContent('title', 'Overzicht')))
+<header class="omt-topbar sticky top-0 z-30">
+    <div class="omt-topbar-inner mx-auto flex min-h-[4.5rem] max-w-[1440px] items-center gap-x-4 px-4 sm:px-6 xl:px-10">
+        <button type="button" @click="sidebarOpen = true" class="omt-menu-button -ml-2 rounded-md p-2 lg:hidden">
             <span class="sr-only">Menu openen</span>
             <x-heroicon-o-bars-3 class="h-6 w-6" />
         </button>
 
-        <h1 class="min-w-0 flex-1 truncate text-lg font-bold tracking-tight text-gray-900 dark:text-white">
-            @yield('header')
-        </h1>
+        <div class="min-w-0 flex-1">
+            <p class="omt-topbar-kicker hidden sm:block">OpenMinetopia <span>/</span> Portaal</p>
+            <h1 class="omt-topbar-title truncate">{{ $pageHeading }}</h1>
+        </div>
 
         @php($unread = auth()->user()->unreadNotifications->count())
         <div class="relative" x-data="{ open: false }">
-            <button @click="open = !open" class="relative rounded-md p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-white"
+            <button @click="open = !open" class="omt-icon-button relative rounded-md p-2"
                     :aria-expanded="open">
                 <span class="sr-only">Notificaties{{ $unread ? " ($unread ongelezen)" : '' }}</span>
                 <x-heroicon-o-bell class="h-6 w-6" />
@@ -28,7 +30,7 @@
                  x-transition:leave="transition ease-in duration-100"
                  x-transition:leave-start="opacity-100"
                  x-transition:leave-end="opacity-0"
-                 class="absolute right-0 z-10 mt-2 w-80 origin-top-right rounded-lg border border-gray-200 bg-white shadow-lg dark:border-gray-700 dark:bg-gray-800">
+                 class="omt-notification-menu absolute right-0 z-10 mt-2 w-80 origin-top-right rounded-lg border border-gray-200 bg-white shadow-lg dark:border-gray-700 dark:bg-gray-800">
                 <div class="flex items-center justify-between border-b border-gray-200 px-4 py-3 dark:border-gray-700">
                     <h2 class="text-sm font-semibold text-gray-900 dark:text-white">Notificaties</h2>
                     @if ($unread > 0)

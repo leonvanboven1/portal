@@ -29,7 +29,7 @@
         }
     </script>
 </head>
-<body class="h-full bg-white text-gray-900 dark:bg-gray-900 dark:text-gray-100" x-data="{
+<body class="omt-app h-full text-gray-900 dark:text-gray-100" x-data="{
     sidebarOpen: false,
     darkMode: document.documentElement.classList.contains('dark'),
     toggleDarkMode() {
@@ -40,10 +40,10 @@
 }">
     @include('portal.layouts.partials.sidebar')
 
-    <div class="min-h-full bg-gray-50 lg:pl-64 dark:bg-gray-900">
+    <div class="omt-app-frame min-h-full lg:pl-[17rem]">
         @include('portal.layouts.partials.header')
 
-        <main class="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
+        <main class="omt-main-content mx-auto max-w-[1440px] px-4 py-6 sm:px-6 sm:py-8 xl:px-10">
             <div class="animate-omt-rise">
                 @yield('content')
             </div>
