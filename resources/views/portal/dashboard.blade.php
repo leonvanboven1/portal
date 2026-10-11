@@ -6,6 +6,8 @@
 @section('content')
     @php
         $user = auth()->user();
+        $canCreateCompany = $user->can('use-companies')
+            && app(\App\Services\EducationService::class)->canCreateCompany($user);
         $stats = array_values(array_filter([
             $user->can('use-bank') ? ['label' => 'Saldo', 'value' => $user->formatted_balance_with_currency, 'href' => route('portal.bank-accounts.index'), 'icon' => 'banknotes', 'tone' => 'lime'] : null,
             $user->can('use-plots') ? ['label' => 'Plots', 'value' => count($user->getPlotsAttribute()), 'href' => route('portal.plots.index'), 'icon' => 'map', 'tone' => 'blue'] : null,
@@ -18,7 +20,7 @@
             $user->can('use-plots') ? ['label' => 'Mijn plots', 'detail' => 'Bekijk je kavels', 'href' => route('portal.plots.index'), 'icon' => 'map'] : null,
             $user->can('use-broker') ? ['label' => 'Makelaar', 'detail' => 'Kopen en huren', 'href' => route('portal.plots.listings.index'), 'icon' => 'currency-dollar'] : null,
             $user->can('request-permits') ? ['label' => 'Vergunningen', 'detail' => 'Aanvragen en status', 'href' => route('portal.permits.index'), 'icon' => 'document-check'] : null,
-            $user->can('use-companies') ? ['label' => 'Bedrijven', 'detail' => 'Je ondernemingen', 'href' => route('portal.companies.index'), 'icon' => 'building-office'] : null,
+            $canCreateCompany ? ['label' => 'Bedrijven', 'detail' => 'Je ondernemingen', 'href' => route('portal.companies.index'), 'icon' => 'building-office'] : null,
             $user->can('use-education') ? ['label' => 'Opleidingen', 'detail' => 'Jouw leerroute', 'href' => route('portal.education.index'), 'icon' => 'academic-cap'] : null,
         ]);
     @endphp

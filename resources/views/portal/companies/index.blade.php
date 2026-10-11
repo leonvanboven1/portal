@@ -26,6 +26,12 @@
                 </div>
             </div>
         @endif
+        @unless ($canCreateCompany)
+            <div class="omt-learning-notice">
+                <x-heroicon-o-academic-cap class="h-5 w-5" />
+                <p>Rond eerst een opleiding af die toegang geeft tot bedrijfsaanvragen. <a class="font-semibold underline" href="{{ route('portal.education.index') }}">Bekijk je leerroute</a>.</p>
+            </div>
+        @endunless
         <!-- Stats Overview -->
         <div class="grid grid-cols-1 gap-5 sm:grid-cols-3">
             <!-- Active Companies -->
@@ -86,11 +92,18 @@
                         <h3 class="text-base font-semibold text-gray-900 dark:text-white">Mijn Bedrijven</h3>
                         <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Overzicht van al je bedrijven</p>
                     </div>
-                    <a href="{{ route('portal.companies.register') }}"
+                          @if ($canCreateCompany)
+                          <a href="{{ route('portal.companies.register') }}"
                        class="inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 dark:bg-indigo-500 dark:hover:bg-indigo-400">
                         <x-heroicon-s-plus class="h-4 w-4 mr-2"/>
                         Nieuw Bedrijf
                     </a>
+                    @else
+                    <a href="{{ route('portal.education.index') }}" class="omt-education-secondary-action">
+                        <x-heroicon-s-academic-cap class="h-4 w-4" />
+                        Opleiding afronden
+                    </a>
+                    @endif
                 </div>
             </div>
 
@@ -162,8 +175,13 @@
                                                 <x-heroicon-o-building-office class="h-12 w-12 text-gray-400 dark:text-gray-500"/>
                                                 <h3 class="mt-2 text-sm font-medium text-gray-900 dark:text-white">Geen bedrijven</h3>
                                                 <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                                                    Je hebt nog geen bedrijven. Start met het aanvragen van een nieuw bedrijf.
+                                                    @if ($canCreateCompany)
+                                                        Je hebt nog geen bedrijven. Start met het aanvragen van een nieuw bedrijf.
+                                                    @else
+                                                        Rond eerst een kwalificerende opleiding af om een bedrijf aan te vragen.
+                                                    @endif
                                                 </p>
+                                                @if ($canCreateCompany)
                                                 <div class="mt-6">
                                                     <a href="{{ route('portal.companies.register') }}"
                                                        class="inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 dark:bg-indigo-500 dark:hover:bg-indigo-400">
@@ -171,6 +189,9 @@
                                                         Nieuw Bedrijf
                                                     </a>
                                                 </div>
+                                                @else
+                                                    <a href="{{ route('portal.education.index') }}" class="omt-education-secondary-action mt-5">Naar opleidingen</a>
+                                                @endif
                                             </div>
                                         </td>
                                     </tr>

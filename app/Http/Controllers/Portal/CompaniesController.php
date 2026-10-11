@@ -39,7 +39,11 @@ class CompaniesController extends Controller
             ->latest()
             ->get();
 
-        return view('portal.companies.index', compact('companies', 'requests'));
+        return view('portal.companies.index', [
+            'companies' => $companies,
+            'requests' => $requests,
+            'canCreateCompany' => $this->education->canCreateCompany(auth()->user()),
+        ]);
     }
 
     public function register()

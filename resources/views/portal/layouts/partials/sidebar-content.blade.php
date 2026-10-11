@@ -3,6 +3,7 @@
     $heading = 'omt-nav-heading px-2 pb-1 pt-6 text-xs font-semibold uppercase';
     // can() also checks the permission's feature, see AppServiceProvider.
     $can = fn (string ...$permissions) => collect($permissions)->contains(fn ($permission) => $user->can($permission));
+    $canApplyForCompany = $can('use-companies') && app(\App\Services\EducationService::class)->canCreateCompany($user);
 @endphp
 
 <a href="{{ route('dashboard') }}" class="omt-brand-lockup omt-hop flex h-[5.5rem] shrink-0 items-center gap-3 text-base font-bold">
@@ -37,13 +38,13 @@
         @endif
     </ul>
 
-    @if ($can('request-permits', 'use-companies', 'view-company-registry'))
+    @if ($can('request-permits', 'view-company-registry') || $canApplyForCompany)
         <div class="{{ $heading }}">Bedrijven & vergunningen</div>
         <ul role="list" class="space-y-0.5">
             @if ($can('request-permits'))
                 <x-portal.nav-link :href="route('portal.permits.index')" :active="request()->routeIs('portal.permits.index', 'portal.permits.request', 'portal.permits.show')" icon="document-check">Mijn vergunningen</x-portal.nav-link>
             @endif
-            @if ($can('use-companies'))
+            @if ($canApplyForCompany)
                 <x-portal.nav-link :href="route('portal.companies.index')" :active="request()->routeIs('portal.companies.index', 'portal.companies.request', 'portal.companies.show', 'portal.companies.register')" icon="building-office">Mijn bedrijven</x-portal.nav-link>
             @endif
             @if ($can('view-company-registry'))

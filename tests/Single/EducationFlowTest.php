@@ -93,6 +93,10 @@ it('shows a roadmap and enforces its prerequisite, payment, duration, and compan
         ->and($this->bank->balance('education-town'))->toBe(0.0)
         ->and($this->bank->deposits())->toBe([]);
 
+    $this->get(EDUCATION_BASE.'/portal/companies')
+        ->assertOk()
+        ->assertDontSee('portal/companies/register')
+        ->assertSee('Naar opleidingen');
     $this->get(EDUCATION_BASE.'/portal/companies/register')->assertRedirect(EDUCATION_BASE.'/opleidingen');
     $this->post(EDUCATION_BASE."/portal/companies/{$companyType->id}/request", [])
         ->assertRedirect(EDUCATION_BASE.'/opleidingen');
@@ -106,6 +110,7 @@ it('shows a roadmap and enforces its prerequisite, payment, duration, and compan
     expect($enrollment->fresh()->status)->toBe('completed');
 
     $this->get(EDUCATION_BASE.'/portal/companies/register')->assertOk();
+    $this->get(EDUCATION_BASE.'/portal/companies')->assertOk()->assertSee('Nieuw Bedrijf');
     $this->post(EDUCATION_BASE."/portal/companies/{$companyType->id}/request", [])
         ->assertSessionHasErrors(['form_data.Bedrijfsnaam', 'bank_account_uuid']);
     $this->post(EDUCATION_BASE."/opleidingen/{$next->id}/start", ['payer_bank_account_uuid' => 'education-player'])
