@@ -30,7 +30,7 @@ beforeEach(function () {
     $this->player = educationFlowUser();
 });
 
-function educationFlowUser(): User
+function educationFlowUser(string $uuid = EDUCATION_PLAYER_UUID): User
 {
     return User::create([
         'name' => 'Leerling',
@@ -39,8 +39,8 @@ function educationFlowUser(): User
         'password' => Hash::make('geheim123'),
         'token' => Str::random(32),
         'minecraft_verified' => true,
-        'minecraft_uuid' => str_replace('-', '', EDUCATION_PLAYER_UUID),
-        'minecraft_plain_uuid' => EDUCATION_PLAYER_UUID,
+        'minecraft_uuid' => str_replace('-', '', $uuid),
+        'minecraft_plain_uuid' => $uuid,
     ]);
 }
 
@@ -116,7 +116,7 @@ it('shows a roadmap and enforces its prerequisite, payment, duration, and compan
 it('allows only the education manager permission into course administration', function () {
     $role = Role::create(['name' => 'Opleidingsbeheer', 'slug' => 'education-manager']);
     $role->permissions()->attach(Permission::where('slug', 'manage-education')->value('id'));
-    $manager = educationFlowUser();
+    $manager = educationFlowUser((string) Str::uuid());
     $manager->roles()->syncWithoutDetaching([$role->id]);
 
     $this->actingAs($manager)->get(EDUCATION_BASE.'/portal/admin/opleidingen')->assertOk();
@@ -128,5 +128,7 @@ it('allows only the education manager permission into course administration', fu
 });
 
 it('does not require an education when no active course grants company access', function () {
-    $this->get(EDUCATION_BASE.'/portal/companies/register')->assertOk();
+    $this->actingAs($this->player)
+        ->get(EDUCATION_BASE.'/portal/companies/register')
+        ->assertOk();
 });
