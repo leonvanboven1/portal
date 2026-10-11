@@ -25,11 +25,7 @@ FROM dunglas/frankenphp:1-php8.4-bookworm AS base
 RUN install-php-extensions pdo_mysql intl zip bcmath pcntl opcache \
     && apt-get update && apt-get install -y --no-install-recommends libcap2-bin && rm -rf /var/lib/apt/lists/* \
     && cp "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini" \
-<<<<<<< HEAD
-    && printf 'upload_max_filesize=200M\npost_max_size=210M\n' > "$PHP_INI_DIR/conf.d/uploads.ini"
-=======
-    && printf 'upload_max_filesize = 64M\npost_max_size = 72M\n' > "$PHP_INI_DIR/conf.d/uploads.ini"
->>>>>>> 8c5a4f577ae86b4bda059ad4e06acc16b3371cb0
+    && printf 'upload_max_filesize=64M\npost_max_size=72M\n' > "$PHP_INI_DIR/conf.d/uploads.ini"
 
 ENV SERVER_NAME=:80 \
     APP_ENV=production \
