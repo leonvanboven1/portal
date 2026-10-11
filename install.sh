@@ -7,19 +7,21 @@
 #
 #   OMT_NONINTERACTIVE=1 OMT_ADDRESS=portaal.jouwserver.nl OMT_EMAIL=jij@example.com \
 #   OMT_NAME="Mijn Server" OMT_SERVER_ADDRESS=play.jouwserver.nl \
-#   OMT_PLUGIN_HOST=host.docker.internal OMT_PLUGIN_PORT=4567 bash install.sh
+#   OMT_PLUGIN_HOST=host.docker.internal OMT_PLUGIN_PORT=4567 \
+#   OMT_GIT_REPO=yourname/portal OMT_REF=main bash install.sh
 #
 # Andere variabelen: OMT_DIR (standaard /opt/openminetopia-portal), OMT_HTTP_PORT,
-# OMT_HTTPS_PORT, OMT_IMAGE, OMT_REF (git-branch voor docker-compose.yml),
-# OMT_BIN_DIR (waar het commando openminetopia-portal komt).
+# OMT_HTTPS_PORT, OMT_IMAGE, OMT_GIT_REPO (GitHub repo, bv. jouwnaam/portal),
+# OMT_REF (git-branch voor docker-compose.yml), OMT_BIN_DIR.
 set -euo pipefail
 
 OMT_DIR="${OMT_DIR:-/opt/openminetopia-portal}"
+OMT_GIT_REPO="${OMT_GIT_REPO:-OpenMinetopia/portal}"
 OMT_REF="${OMT_REF:-main}"
 OMT_IMAGE="${OMT_IMAGE:-ghcr.io/openminetopia/portal:latest}"
 OMT_BIN_DIR="${OMT_BIN_DIR:-/usr/local/bin}"
 OMT_NONINTERACTIVE="${OMT_NONINTERACTIVE:-0}"
-RAW_URL="https://raw.githubusercontent.com/OpenMinetopia/portal/${OMT_REF}"
+RAW_URL="https://raw.githubusercontent.com/${OMT_GIT_REPO}/${OMT_REF}"
 
 bold() { printf '\033[1m%s\033[0m\n' "$*"; }
 info() { printf '  %s\n' "$*"; }

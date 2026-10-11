@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Portal;
 
 use App\Http\Controllers\Controller;
 use App\Models\PlotListing;
+use App\Models\PlotListingSetting;
 use App\Services\PlotRentalService;
 use App\Services\Plugin\PlotService;
 use Illuminate\Http\Request;
@@ -177,7 +178,7 @@ class BulkPlotListingController extends Controller
             'price' => 'required|numeric|min:0|max:99999999',
             'period' => 'required_if:type,rent|nullable|in:week,month',
             'description' => 'required|string|max:1000',
-            'image' => 'nullable|image|max:2048',
+            'image' => 'nullable|image|max:'.PlotListingSetting::current()->max_image_kb(),
             'instant_buy' => 'nullable|boolean',
             'payout_bank_account_uuid' => ($payoutRequired ? 'required' : 'nullable').'|string',
         ], [

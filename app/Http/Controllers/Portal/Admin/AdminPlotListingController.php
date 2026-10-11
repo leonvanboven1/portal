@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Portal\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Portal\PlotListingController;
 use App\Models\PlotListing;
+use App\Models\PlotListingSetting;
 use App\Services\PlotRentalService;
 use App\Services\Plugin\PlotService;
 use Illuminate\Http\Request;
@@ -52,7 +53,7 @@ class AdminPlotListingController extends Controller
         $validated = $request->validate([
             'price' => 'required|numeric|min:0',
             'description' => 'required|string|max:1000',
-            'image' => 'nullable|image|max:2048',
+            'image' => 'nullable|image|max:'.PlotListingSetting::current()->max_image_kb(),
             'instant_buy' => 'nullable|boolean',
             'payout_bank_account_uuid' => 'nullable|string'
         ]);

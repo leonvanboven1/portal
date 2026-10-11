@@ -65,6 +65,51 @@
                     </form>
                 </div>
 
+                <!-- Plot Image Settings -->
+                <div class="bg-white dark:bg-gray-800 shadow-sm rounded-lg">
+                    <div class="px-4 py-5 sm:px-6 border-b border-gray-200 dark:border-gray-700">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h3 class="text-base font-semibold text-gray-900 dark:text-white">Plot Afbeeldingen</h3>
+                                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Stel in hoe groot een foto mag zijn bij het plaatsen van een plot te koop of te huur.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <form action="{{ route('portal.admin.settings.update-plot-listing-settings') }}" method="POST" class="px-4 py-5 sm:p-6">
+                        @csrf
+                        @method('PUT')
+
+                        <div class="space-y-4">
+                            <div>
+                                <label for="max_image_size_mb" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                    Maximale afbeeldingsgrootte (MB)
+                                </label>
+                                <div class="mt-1">
+                                    <input type="number"
+                                           name="max_image_size_mb"
+                                           id="max_image_size_mb"
+                                           min="1"
+                                           max="200"
+                                           step="1"
+                                           value="{{ old('max_image_size_mb', $plotListingSettings->max_image_size_mb ?? \App\Models\PlotListingSetting::DEFAULT_MAX_IMAGE_SIZE_MB) }}"
+                                           class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white sm:text-sm">
+                                </div>
+                                <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                                    Deze instelling geldt voor foto’s bij plotverkoop en plotverhuur. Voor grote afbeeldingen kun je hier meer MB instellen.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="mt-6 flex justify-end">
+                            <button type="submit"
+                                    class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800">
+                                <x-heroicon-s-check class="h-4 w-4 mr-2"/>
+                                Instellingen Opslaan
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
                 <!-- Plugin Integration Settings -->
                 <div class="bg-white dark:bg-gray-800 shadow-sm rounded-lg">
                     <div class="px-4 py-5 sm:px-6 border-b border-gray-200 dark:border-gray-700">

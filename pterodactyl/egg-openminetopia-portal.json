@@ -10,7 +10,8 @@
     "description": "Het webportaal voor een Minecraft-server met de OpenMinetopia-plugin: bank, plots, makelaar, bedrijven, vergunningen en politie. Maak eerst een database aan op het tabblad Databases en vul die gegevens in bij Startup. Bij de eerste start toont de console de regels voor de config.yml van de plugin en een link om beheerder te worden. Het portaal luistert met HTTP op de poort van deze server; zet er voor HTTPS een reverse proxy of Cloudflare voor.",
     "features": null,
     "docker_images": {
-        "OpenMinetopia Portal": "ghcr.io/openminetopia/portal-pterodactyl:latest"
+        "OpenMinetopia Portal": "ghcr.io/openminetopia/portal-pterodactyl:latest",
+        "Your fork": "ghcr.io/your-user/portal-pterodactyl:latest"
     },
     "file_denylist": [],
     "startup": "portal-start",
@@ -76,6 +77,26 @@
             "user_viewable": true,
             "user_editable": true,
             "rules": "required|integer|between:1,65535",
+            "field_type": "text"
+        },
+        {
+            "name": "GitHub repo van je fork",
+            "description": "Gebruik je eigen fork, bijvoorbeeld jouwnaam/portal. Laat staan op OpenMinetopia/portal als je de upstream versie gebruikt.",
+            "env_variable": "PORTAL_GIT_REPO",
+            "default_value": "OpenMinetopia/portal",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string|max:255",
+            "field_type": "text"
+        },
+        {
+            "name": "Git branch of tag",
+            "description": "Branch of tag om te gebruiken uit je fork, bijvoorbeeld main of mijn-update.",
+            "env_variable": "PORTAL_GIT_REF",
+            "default_value": "main",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string|max:255",
             "field_type": "text"
         },
         {

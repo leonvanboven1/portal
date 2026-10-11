@@ -146,6 +146,9 @@ Route::middleware('auth')->group(function () {
                 Route::middleware('can:manage-settings')->group(function () {
                     Route::get('settings', [SettingsController::class, 'index'])->name('settings.index');
                     Route::put('settings/features', [SettingsController::class, 'updateFeatures'])->name('settings.update-features');
+                    Route::put('settings/plot-listing-settings', [SettingsController::class, 'updatePlotListingSettings'])
+                        ->middleware('feature:broker')
+                        ->name('settings.update-plot-listing-settings');
                     Route::put('settings/permit-settings', [SettingsController::class, 'updatePermitSettings'])
                         ->middleware('feature:permits')
                         ->name('settings.update-permit-settings');
