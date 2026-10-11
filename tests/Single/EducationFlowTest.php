@@ -120,6 +120,10 @@ it('allows only the education manager permission into course administration', fu
     $manager->roles()->syncWithoutDetaching([$role->id]);
 
     $this->actingAs($manager)->get(EDUCATION_BASE.'/portal/admin/opleidingen')->assertOk();
+    $this->get(EDUCATION_BASE.'/portal/admin/opleidingen/aanmaken')
+        ->assertOk()
+        ->assertSee('education-town')
+        ->assertDontSee('education-player');
     $this->actingAs($this->player)->get(EDUCATION_BASE.'/portal/admin/opleidingen')->assertForbidden();
 });
 

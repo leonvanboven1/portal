@@ -4,12 +4,17 @@ namespace App\Http\Controllers\Portal\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\EducationCourse;
+use App\Services\Plugin\BankingService;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Str;
 
 class EducationCourseController extends Controller
 {
+    public function __construct(private BankingService $banking)
+    {
+    }
+
     public function index()
     {
         return view('portal.admin.education.index', [
@@ -22,7 +27,7 @@ class EducationCourseController extends Controller
         return view('portal.admin.education.form', [
             'course' => new EducationCourse(['duration_hours' => 24, 'price' => 0]),
             'courses' => EducationCourse::orderBy('title')->get(),
-            'bankAccounts' => collect(auth()->user()->bank_accounts)->where('type', '!=', 'PRIVATE'),
+            'bankAccounts' => $this->payoutBankAccounts(),
         ]);
     }
 
@@ -45,7 +50,7 @@ class EducationCourseController extends Controller
         return view('portal.admin.education.form', [
             'course' => $course->load('prerequisites'),
             'courses' => EducationCourse::where('id', '!=', $course->id)->orderBy('title')->get(),
-            'bankAccounts' => collect(auth()->user()->bank_accounts)->where('type', '!=', 'PRIVATE'),
+            'bankAccounts' => $this->payoutBankAccounts(),
         ]);
     }
 
@@ -102,7 +107,7 @@ class EducationCourseController extends Controller
             ]);
         }
 
-        if (! empty($validated['payout_bank_account_uuid']) && ! collect(auth()->user()->bank_accounts)->where('type', '!=', 'PRIVATE')->contains('uuid', $validated['payout_bank_account_uuid'])) {
+        if (! empty($validated['payout_bank_account_uuid']) && ! $this->payoutBankAccounts()->contains('uuid', $validated['payout_bank_account_uuid'])) {
             throw ValidationException::withMessages([
                 'payout_bank_account_uuid' => 'Kies een beschikbare overheids- of bedrijfsrekening.',
             ]);
@@ -112,6 +117,13 @@ class EducationCourseController extends Controller
         $validated['is_active'] = $request->boolean('is_active');
 
         return $validated;
+    }
+
+    private function payoutBankAccounts()
+    {
+        return collect($this->banking->getAllBankAccounts())
+            ->where('type', '!=', 'PRIVATE')
+            ->values();
     }
 
     private function invalidPrerequisiteChain(array $prerequisiteIds, ?int $courseId): ?string
