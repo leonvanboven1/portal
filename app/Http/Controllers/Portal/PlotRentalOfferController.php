@@ -9,6 +9,7 @@ use App\Services\PlotRentalException;
 use App\Services\PlotRentalService;
 use App\Services\Plugin\PlotService;
 use Illuminate\Http\Request;
+use App\Support\Portal;
 
 /** Offering a plot for rent at the makelaar, and renting one. */
 class PlotRentalOfferController extends Controller
@@ -157,7 +158,11 @@ class PlotRentalOfferController extends Controller
             'price' => 'required|numeric|min:0.01|max:99999999',
             'period' => 'required|in:week,month',
             'description' => 'required|string|max:1000',
+<<<<<<< HEAD
             'image' => 'nullable|image|max:'.PlotListingSetting::current()->max_image_kb(),
+=======
+            'image' => 'nullable|image|max:'.Portal::maxUploadKilobytes(),
+>>>>>>> 8c5a4f577ae86b4bda059ad4e06acc16b3371cb0
             'payout_bank_account_uuid' => ($payoutRequired ? 'required' : 'nullable').'|string',
         ], [
             'period.in' => 'Kies per week of per maand.',

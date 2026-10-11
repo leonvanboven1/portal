@@ -9,6 +9,7 @@ use App\Models\PlotListingSetting;
 use App\Services\PlotRentalService;
 use App\Services\Plugin\PlotService;
 use Illuminate\Http\Request;
+use App\Support\Portal;
 
 class AdminPlotListingController extends Controller
 {
@@ -53,7 +54,11 @@ class AdminPlotListingController extends Controller
         $validated = $request->validate([
             'price' => 'required|numeric|min:0',
             'description' => 'required|string|max:1000',
+<<<<<<< HEAD
             'image' => 'nullable|image|max:'.PlotListingSetting::current()->max_image_kb(),
+=======
+            'image' => 'nullable|image|max:'.Portal::maxUploadKilobytes(),
+>>>>>>> 8c5a4f577ae86b4bda059ad4e06acc16b3371cb0
             'instant_buy' => 'nullable|boolean',
             'payout_bank_account_uuid' => 'nullable|string'
         ]);

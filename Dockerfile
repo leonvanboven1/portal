@@ -18,13 +18,18 @@ RUN composer install --no-dev --no-scripts --no-autoloader --prefer-dist --no-in
 COPY . .
 RUN composer dump-autoload --no-dev --optimize --no-scripts
 
-# What both images share: PHP with the extensions, the app and its assets.
+# What both images share: PHP with the extensions, the app and its assets. PHP takes
+# uploads up to 64 MB; PORTAL_MAX_UPLOAD_MB sets what the portal accepts.
 FROM dunglas/frankenphp:1-php8.4-bookworm AS base
 
 RUN install-php-extensions pdo_mysql intl zip bcmath pcntl opcache \
     && apt-get update && apt-get install -y --no-install-recommends libcap2-bin && rm -rf /var/lib/apt/lists/* \
     && cp "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini" \
+<<<<<<< HEAD
     && printf 'upload_max_filesize=200M\npost_max_size=210M\n' > "$PHP_INI_DIR/conf.d/uploads.ini"
+=======
+    && printf 'upload_max_filesize = 64M\npost_max_size = 72M\n' > "$PHP_INI_DIR/conf.d/uploads.ini"
+>>>>>>> 8c5a4f577ae86b4bda059ad4e06acc16b3371cb0
 
 ENV SERVER_NAME=:80 \
     APP_ENV=production \

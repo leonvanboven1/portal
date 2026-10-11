@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use App\Support\Portal;
 
 /**
  * Several plots to the makelaar at once, for sale or for rent, with one set of
@@ -178,7 +179,11 @@ class BulkPlotListingController extends Controller
             'price' => 'required|numeric|min:0|max:99999999',
             'period' => 'required_if:type,rent|nullable|in:week,month',
             'description' => 'required|string|max:1000',
+<<<<<<< HEAD
             'image' => 'nullable|image|max:'.PlotListingSetting::current()->max_image_kb(),
+=======
+            'image' => 'nullable|image|max:'.Portal::maxUploadKilobytes(),
+>>>>>>> 8c5a4f577ae86b4bda059ad4e06acc16b3371cb0
             'instant_buy' => 'nullable|boolean',
             'payout_bank_account_uuid' => ($payoutRequired ? 'required' : 'nullable').'|string',
         ], [
