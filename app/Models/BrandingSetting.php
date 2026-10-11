@@ -12,7 +12,8 @@ use Illuminate\Support\Facades\Schema;
  */
 class BrandingSetting extends Model
 {
-    public const DEFAULT_ACCENT = '#3f6b30';
+    public const DEFAULT_ACCENT = '#bd654b';
+    public const DEFAULT_SIDEBAR = '#25292f';
 
 
     // How far each shade is mixed towards white (positive) or black (negative); 600 is the chosen colour.
@@ -23,6 +24,7 @@ class BrandingSetting extends Model
 
     protected $fillable = [
         'accent_color',
+        'sidebar_color',
         'logo_path',
         'logo_pixelated',
     ];

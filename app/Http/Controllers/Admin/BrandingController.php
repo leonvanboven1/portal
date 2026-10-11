@@ -20,11 +20,13 @@ class BrandingController extends Controller
     {
         $validated = $request->validate([
             'accent_color' => ['required', 'regex:/^#[0-9a-fA-F]{6}$/'],
+            'sidebar_color' => ['nullable', 'regex:/^#[0-9a-fA-F]{6}$/'],
             'logo' => ['nullable', 'image', 'mimes:png,jpg,jpeg,webp,gif', 'max:1024'],
             'remove_logo' => ['nullable', 'boolean'],
         ], [
             'accent_color.required' => 'Kies een accentkleur.',
-            'accent_color.regex' => 'De accentkleur moet een hexcode zijn, bijvoorbeeld #3f6b30.',
+            'accent_color.regex' => 'De accentkleur moet een hexcode zijn, bijvoorbeeld #bd654b.',
+            'sidebar_color.regex' => 'De zijbalkkleur moet een hexcode zijn, bijvoorbeeld #25292f.',
             'logo.image' => 'Het logo moet een afbeelding zijn.',
             'logo.mimes' => 'Het logo moet een PNG, JPG, WebP of GIF zijn.',
             'logo.max' => 'Het logo mag maximaal 1 MB zijn.',
@@ -32,6 +34,9 @@ class BrandingController extends Controller
 
         $branding = BrandingSetting::first() ?? new BrandingSetting();
         $branding->accent_color = strtolower($validated['accent_color']);
+        if (array_key_exists('sidebar_color', $validated)) {
+            $branding->sidebar_color = $validated['sidebar_color'] ? strtolower($validated['sidebar_color']) : null;
+        }
         $branding->logo_pixelated = $request->boolean('logo_pixelated');
 
         if ($request->hasFile('logo') || $request->boolean('remove_logo')) {
@@ -56,7 +61,7 @@ class BrandingController extends Controller
             if ($branding->logo_path) {
                 Storage::disk('public')->delete($branding->logo_path);
             }
-            $branding->update(['accent_color' => null, 'logo_path' => null, 'logo_pixelated' => false]);
+            $branding->update(['accent_color' => null, 'sidebar_color' => null, 'logo_path' => null, 'logo_pixelated' => false]);
         }
 
         return back()->with('success', 'Het standaard uiterlijk is hersteld.');

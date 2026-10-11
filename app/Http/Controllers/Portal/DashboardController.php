@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Portal;
 
 use App\Http\Controllers\Controller;
+use App\Services\EducationService;
 use Illuminate\Http\Request;
 
 class DashboardController extends Controller
@@ -10,8 +11,19 @@ class DashboardController extends Controller
     public function index()
     {
         $user = auth()->user();
+        $educationProgress = null;
 
-        return view('portal.dashboard');
+        if ($user->can('use-education')) {
+            $roadmap = app(EducationService::class)->roadmap($user);
+            $educationProgress = [
+                'completed' => $roadmap->where('state', 'completed')->count(),
+                'total' => $roadmap->count(),
+                'inProgress' => $roadmap->first(fn ($item) => $item['state'] === 'in_progress'),
+                'href' => route('portal.education.index'),
+            ];
+        }
+
+        return view('portal.dashboard', compact('educationProgress'));
     }
 
     private function getRecentActivity($user)

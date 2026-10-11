@@ -29,6 +29,7 @@ final class Permissions
         'request-permits' => ['Vergunningen aanvragen', 'Vergunningen aanvragen en eigen aanvragen bekijken.', self::PLAYER, 'permits'],
         'use-companies' => ['Bedrijven', 'Bedrijven aanvragen, beheren en opheffen.', self::PLAYER, 'companies'],
         'view-company-registry' => ['Bedrijvenregister', 'Het bedrijvenregister doorzoeken.', self::PLAYER, 'companies'],
+        'use-education' => ['Opleidingen', 'Opleidingen bekijken, volgen en afronden.', self::PLAYER, 'education'],
 
         'manage-users' => ['Gebruikers beheren', 'Gebruikers bekijken en bewerken en hun rollen toewijzen.', self::MANAGE, null],
         'manage-roles' => ['Rollen beheren', 'Rollen aanmaken, bewerken en verwijderen.', self::MANAGE, null],
@@ -40,6 +41,7 @@ final class Permissions
         'manage-permit-types' => ['Vergunningtypes', 'Vergunningtypes aanmaken en bewerken.', self::MANAGE, 'permits'],
         'manage-companies' => ['Bedrijfsaanvragen', 'Bedrijfs- en opheffingsaanvragen behandelen.', self::MANAGE, 'companies'],
         'manage-company-types' => ['Bedrijfstypes', 'Bedrijfstypes aanmaken en bewerken.', self::MANAGE, 'companies'],
+        'manage-education' => ['Opleidingen beheren', 'Opleidingen en hun vereisten aanmaken en beheren.', self::MANAGE, 'education'],
         'manage-police' => ['Politie', "De spelersdatabase gebruiken en VOG's afgeven.", self::MANAGE, 'police'],
     ];
 

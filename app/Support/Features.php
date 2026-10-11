@@ -20,6 +20,7 @@ final class Features
         'criminal_records' => ['Strafblad', 'Spelers zien hun eigen strafblad.', null, true],
         'permits' => ['Vergunningen', 'Vergunningen aanvragen en behandelen.', null, false],
         'companies' => ['Bedrijven', 'Bedrijven aanvragen, het bedrijvenregister en de KvK.', null, false],
+        'education' => ['Opleidingen', 'Opleidingen volgen en beheren.', null, true],
         'police' => ['Politie', "De spelersdatabase voor agenten, die er ook VOG's afgeven.", null, true],
     ];
 

@@ -10,6 +10,7 @@
         <form action="{{ route('portal.admin.branding.update') }}" method="POST" enctype="multipart/form-data"
               x-data="{
                   color: @js(old('accent_color', $branding->accent_color ?? \App\Models\BrandingSetting::DEFAULT_ACCENT)),
+                  sidebarColor: @js(old('sidebar_color', $branding->sidebar_color ?? \App\Models\BrandingSetting::DEFAULT_SIDEBAR)),
                   logoPreview: @js($branding->logo_path ? $branding->logoUrl() : null),
                   removeLogo: false,
                   pickLogo(event) {
@@ -53,6 +54,35 @@
                                 <span class="h-3 w-3 rounded-sm" :style="{ backgroundColor: color }"></span>
                             </div>
                             <p class="mt-3 text-sm text-gray-500 dark:text-gray-400">Tip: kies een kleur die donker genoeg is voor witte tekst.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sidebar colour -->
+                <div class="rounded-lg bg-white shadow-sm dark:bg-gray-800">
+                    <div class="border-b border-gray-200 px-4 py-5 sm:px-6 dark:border-gray-700">
+                        <h3 class="text-base font-semibold text-gray-900 dark:text-white">Zijbalkkleur</h3>
+                        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Kies de achtergrondkleur van de navigatie. De standaard is grafiet.</p>
+                    </div>
+                    <div class="px-4 py-5 sm:p-6">
+                        <label for="sidebar_color" class="block text-sm font-semibold text-gray-900 dark:text-white">Navigatiekleur</label>
+                        <div class="mt-1.5 flex items-center gap-3">
+                            <input type="color" x-model="sidebarColor" aria-label="Kies de zijbalkkleur"
+                                   class="h-10 w-14 cursor-pointer rounded-md border-0 bg-transparent p-0 ring-1 ring-inset ring-gray-300 dark:ring-gray-700">
+                            <input type="text" id="sidebar_color" name="sidebar_color" x-model="sidebarColor" maxlength="7" required
+                                   class="block w-32 rounded-md border-0 bg-white px-3 py-2 font-mono text-sm text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 dark:bg-gray-800 dark:text-white dark:ring-gray-700 dark:focus:ring-indigo-400">
+                            <button type="button" @click="sidebarColor = @js(\App\Models\BrandingSetting::DEFAULT_SIDEBAR)"
+                                    class="text-sm font-medium text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white">
+                                Grafiet
+                            </button>
+                        </div>
+                        @error('sidebar_color')
+                            <p class="mt-1.5 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                        @enderror
+                        <div class="mt-5 flex max-w-sm items-center gap-3 rounded-lg p-4" :style="{ backgroundColor: sidebarColor }">
+                            <span class="h-8 w-8 rounded-md bg-white/10"></span>
+                            <span class="text-sm font-semibold text-white">Navigatievoorbeeld</span>
+                            <span class="ml-auto h-2 w-2 rounded-full" :style="{ backgroundColor: color }"></span>
                         </div>
                     </div>
                 </div>
@@ -106,7 +136,7 @@
                             <x-heroicon-s-check class="mr-2 h-4 w-4" />
                             Opslaan
                         </button>
-                        @if ($branding->exists && ($branding->accent_color || $branding->logo_path))
+                        @if ($branding->exists && ($branding->accent_color || $branding->sidebar_color || $branding->logo_path))
                             <button type="submit" form="branding-reset"
                                     class="inline-flex w-full items-center justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 dark:bg-gray-700 dark:text-gray-300 dark:ring-gray-600 dark:hover:bg-gray-600">
                                 <x-heroicon-s-arrow-uturn-left class="mr-2 h-4 w-4" />
@@ -119,7 +149,7 @@
         </form>
 
         <form id="branding-reset" action="{{ route('portal.admin.branding.reset') }}" method="POST"
-              onsubmit="return confirm('Accentkleur en logo terugzetten naar de standaard?')">
+              onsubmit="return confirm('Kleuren en logo terugzetten naar de standaard?')">
             @csrf
             @method('DELETE')
         </form>

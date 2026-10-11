@@ -19,6 +19,7 @@
             $user->can('use-broker') ? ['label' => 'Makelaar', 'detail' => 'Kopen en huren', 'href' => route('portal.plots.listings.index'), 'icon' => 'currency-dollar'] : null,
             $user->can('request-permits') ? ['label' => 'Vergunningen', 'detail' => 'Aanvragen en status', 'href' => route('portal.permits.index'), 'icon' => 'document-check'] : null,
             $user->can('use-companies') ? ['label' => 'Bedrijven', 'detail' => 'Je ondernemingen', 'href' => route('portal.companies.index'), 'icon' => 'building-office'] : null,
+            $user->can('use-education') ? ['label' => 'Opleidingen', 'detail' => 'Jouw leerroute', 'href' => route('portal.education.index'), 'icon' => 'academic-cap'] : null,
         ]);
     @endphp
 
@@ -106,4 +107,21 @@
             </div>
         </aside>
     </div>
+
+    @if ($educationProgress)
+        <a href="{{ $educationProgress['href'] }}" class="omt-dashboard-education">
+            <span class="omt-dashboard-education-icon"><x-heroicon-o-academic-cap class="h-5 w-5" /></span>
+            <span class="min-w-0 flex-1">
+                <span class="omt-dashboard-education-kicker">JOUW LEERROUTE</span>
+                @if ($educationProgress['inProgress'])
+                    <span class="omt-dashboard-education-title">{{ $educationProgress['inProgress']['course']->title }}</span>
+                    <span class="omt-dashboard-education-detail">Klaar op {{ $educationProgress['inProgress']['enrollment']->completes_at->format('d-m-Y H:i') }}</span>
+                @else
+                    <span class="omt-dashboard-education-title">{{ $educationProgress['completed'] }} van {{ $educationProgress['total'] }} opleidingen afgerond</span>
+                    <span class="omt-dashboard-education-detail">Bekijk je volgende stap op de routekaart.</span>
+                @endif
+            </span>
+            <x-heroicon-o-arrow-right class="omt-shortcut-arrow h-4 w-4" />
+        </a>
+    @endif
 @endsection

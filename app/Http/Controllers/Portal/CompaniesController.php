@@ -12,14 +12,18 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use App\Services\Plugin\BankingService;
 use App\Models\CompanySetting;
+use App\Services\EducationService;
+use Illuminate\Http\RedirectResponse;
 
 class CompaniesController extends Controller
 {
     protected BankingService $bankingService;
+    protected EducationService $education;
 
-    public function __construct(BankingService $bankingService)
+    public function __construct(BankingService $bankingService, EducationService $education)
     {
         $this->bankingService = $bankingService;
+        $this->education = $education;
     }
 
     public function index()
@@ -40,6 +44,10 @@ class CompaniesController extends Controller
 
     public function register()
     {
+        if ($redirect = $this->companyEducationGate()) {
+            return $redirect;
+        }
+
         // Show available company types
         $companyTypes = CompanyType::where('is_active', true)->get();
         return view('portal.companies.register', compact('companyTypes'));
@@ -47,6 +55,10 @@ class CompaniesController extends Controller
 
     public function request(CompanyType $companyType)
     {
+        if ($redirect = $this->companyEducationGate()) {
+            return $redirect;
+        }
+
         if (!$companyType->is_active) {
             return back()->with('error', 'Dit bedrijfstype is momenteel niet beschikbaar.');
         }
@@ -82,6 +94,10 @@ class CompaniesController extends Controller
 
     public function store(Request $request, CompanyType $companyType)
     {
+        if ($redirect = $this->companyEducationGate()) {
+            return $redirect;
+        }
+
         try {
             // Build validation rules
             $rules = [
@@ -274,5 +290,26 @@ class CompaniesController extends Controller
         $dissolutionRequest = $company->dissolutionRequest;
 
         return view('portal.companies.show', compact('company', 'dissolutionRequest'));
+    }
+
+    private function companyEducationGate(): ?RedirectResponse
+    {
+        $user = auth()->user();
+
+        if ($this->education->canCreateCompany($user)) {
+            return null;
+        }
+
+        if ($user->can('use-education')) {
+            return redirect()->route('portal.education.index')->with('error', [
+                'title' => 'Opleiding vereist',
+                'message' => 'Rond eerst een opleiding af die toegang geeft tot het aanvragen van een bedrijf.',
+            ]);
+        }
+
+        return back()->with('error', [
+            'title' => 'Opleiding vereist',
+            'message' => 'Je moet eerst een erkende opleiding afronden. Vraag een beheerder om toegang tot Opleidingen.',
+        ]);
     }
 } 

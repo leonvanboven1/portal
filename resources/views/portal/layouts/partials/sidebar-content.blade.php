@@ -16,6 +16,9 @@
 <nav class="omt-navigation flex flex-1 flex-col" aria-label="Portaal">
     <ul role="list" class="space-y-0.5">
         <x-portal.nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" icon="home">Overzicht</x-portal.nav-link>
+        @if ($can('use-education'))
+            <x-portal.nav-link :href="route('portal.education.index')" :active="request()->routeIs('portal.education.*')" icon="academic-cap">Opleidingen</x-portal.nav-link>
+        @endif
         @if ($can('use-bank'))
             <x-portal.nav-link :href="route('portal.bank-accounts.index')" :active="request()->routeIs('portal.bank-accounts.*')" icon="credit-card">Mijn bankrekeningen</x-portal.nav-link>
         @endif
@@ -81,7 +84,7 @@
         </ul>
     @endif
 
-    @if ($can('manage-users', 'manage-plots', 'manage-roles', 'manage-settings', 'manage-appearance'))
+    @if ($can('manage-users', 'manage-plots', 'manage-roles', 'manage-settings', 'manage-appearance', 'manage-education'))
         <div class="{{ $heading }}">Beheer</div>
         <ul role="list" class="space-y-0.5">
             @if ($can('manage-users'))
@@ -92,6 +95,9 @@
             @endif
             @if ($can('manage-roles'))
                 <x-portal.nav-link :href="route('portal.admin.roles.index')" :active="request()->routeIs('portal.admin.roles.*')" icon="key">Rollen</x-portal.nav-link>
+            @endif
+            @if ($can('manage-education'))
+                <x-portal.nav-link :href="route('portal.admin.education.index')" :active="request()->routeIs('portal.admin.education.*')" icon="academic-cap">Opleidingen beheren</x-portal.nav-link>
             @endif
             @if ($can('manage-settings'))
                 <x-portal.nav-link :href="route('portal.admin.settings.index')" :active="request()->routeIs('portal.admin.settings.*')" icon="cog-6-tooth">Instellingen</x-portal.nav-link>

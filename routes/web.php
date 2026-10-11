@@ -7,6 +7,8 @@ use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Auth\MinecraftVerificationController;
 use App\Http\Controllers\Portal\DashboardController;
+use App\Http\Controllers\Portal\EducationController;
+use App\Http\Controllers\Portal\Admin\EducationCourseController;
 use App\Http\Controllers\Portal\Admin\AdminUserController;
 use App\Http\Controllers\Portal\Admin\AdminRoleController;
 use App\Http\Controllers\Admin\SettingsController;
@@ -70,6 +72,11 @@ Route::middleware('auth')->group(function () {
     // Every page checks its feature (404 while it is off) and a permission (see App\Support\Permissions).
     Route::middleware('minecraft.verified')->group(function () {
         Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+
+        Route::middleware(['feature:education', 'can:use-education'])->prefix('opleidingen')->name('education.')->group(function () {
+            Route::get('/', [EducationController::class, 'index'])->name('index');
+            Route::post('/{course}/start', [EducationController::class, 'enroll'])->name('enroll');
+        });
 
         Route::get('/portal/criminal-records', [CriminalRecordController::class, 'index'])
             ->middleware(['feature:criminal_records', 'can:view-criminal-record'])
@@ -142,6 +149,15 @@ Route::middleware('auth')->group(function () {
                 });
 
                 Route::resource('roles', AdminRoleController::class)->except('show')->middleware('can:manage-roles');
+
+                Route::prefix('opleidingen')->name('education.')->middleware(['feature:education', 'can:manage-education'])->group(function () {
+                    Route::get('/', [EducationCourseController::class, 'index'])->name('index');
+                    Route::get('/aanmaken', [EducationCourseController::class, 'create'])->name('create');
+                    Route::post('/', [EducationCourseController::class, 'store'])->name('store');
+                    Route::get('/{course}/bewerken', [EducationCourseController::class, 'edit'])->name('edit');
+                    Route::put('/{course}', [EducationCourseController::class, 'update'])->name('update');
+                    Route::delete('/{course}', [EducationCourseController::class, 'destroy'])->name('destroy');
+                });
 
                 Route::middleware('can:manage-settings')->group(function () {
                     Route::get('settings', [SettingsController::class, 'index'])->name('settings.index');

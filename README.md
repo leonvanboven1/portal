@@ -41,6 +41,7 @@ Het script stelt een paar vragen (adres, naam van je server, waar de plugin draa
 - **Makelaar:** plots te koop zetten en kopen, met betaling via de bank.
 - **Bedrijven:** een bedrijf inschrijven bij de Kamer van Koophandel, het bedrijvenregister, en opheffen.
 - **Vergunningen:** vergunningen aanvragen; de juiste rol beoordeelt ze.
+- **Opleidingen:** een leerroute volgen met vereiste stappen, studieduur en cursusgeld; afgeronde opleidingen kunnen toegang geven tot bedrijfsaanvragen.
 - **Politie:** een spelersdatabase met strafbladen voor agenten.
 - **Strafblad:** spelers zien hun eigen strafblad.
 - **Beheer:** gebruikers, rollen en rechten, en per onderdeel aan of uit.
