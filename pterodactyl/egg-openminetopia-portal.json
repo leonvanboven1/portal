@@ -79,26 +79,6 @@
             "field_type": "text"
         },
         {
-            "name": "GitHub repo van je fork",
-            "description": "Gebruik je eigen fork, bijvoorbeeld jouwnaam/portal. Laat staan op OpenMinetopia/portal als je de upstream versie gebruikt.",
-            "env_variable": "PORTAL_GIT_REPO",
-            "default_value": "OpenMinetopia/portal",
-            "user_viewable": true,
-            "user_editable": true,
-            "rules": "required|string|max:255",
-            "field_type": "text"
-        },
-        {
-            "name": "Git branch of tag",
-            "description": "Branch of tag om te gebruiken uit je fork, bijvoorbeeld main of mijn-update.",
-            "env_variable": "PORTAL_GIT_REF",
-            "default_value": "main",
-            "user_viewable": true,
-            "user_editable": true,
-            "rules": "required|string|max:255",
-            "field_type": "text"
-        },
-        {
             "name": "Database host",
             "description": "Van het tabblad Databases van deze server.",
             "env_variable": "DB_HOST",
