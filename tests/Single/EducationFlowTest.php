@@ -138,7 +138,21 @@ it('allows only the education manager permission into course administration', fu
     $this->actingAs($this->player)->get(EDUCATION_BASE.'/portal/admin/opleidingen')->assertForbidden();
 });
 
-it('does not require an education when no active course grants company access', function () {
+it('keeps company access locked until an active qualifying course is configured', function () {
+    $this->actingAs($this->player)
+        ->get(EDUCATION_BASE.'/portal/companies/register')
+        ->assertRedirect(EDUCATION_BASE.'/opleidingen');
+
+    $this->get(EDUCATION_BASE.'/portal/companies')
+        ->assertOk()
+        ->assertDontSeeText('Nieuw Bedrijf')
+        ->assertSeeText('Opleiding afronden');
+});
+
+it('allows company access when the education feature is disabled', function () {
+    PortalFeature::where('key', 'education')->update(['is_enabled' => false]);
+    \App\Support\Features::forget();
+
     $this->actingAs($this->player)
         ->get(EDUCATION_BASE.'/portal/companies/register')
         ->assertOk();

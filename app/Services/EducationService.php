@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\EducationCourse;
 use App\Models\EducationEnrollment;
 use App\Models\User;
+use App\Support\Features;
 use Illuminate\Support\Collection;
 
 class EducationService
@@ -44,11 +45,15 @@ class EducationService
     /** Whether a player can submit a company request under the configured education gate. */
     public function canCreateCompany(User $user): bool
     {
+        if (! Features::enabled('education')) {
+            return true;
+        }
+
         $this->completeDue($user);
 
         $requiredCourses = EducationCourse::active()->where('qualifies_for_company', true)->pluck('id');
         if ($requiredCourses->isEmpty()) {
-            return true;
+            return false;
         }
 
         return EducationEnrollment::where('user_id', $user->id)
