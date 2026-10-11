@@ -138,7 +138,7 @@
 
                         <div class="space-y-4">
                             @foreach($roles as $role)
-                                @php($grantable = $role->canBeGrantedBy(auth()->user()))
+                                @php($grantable = $role->canBeAssignedTo(auth()->user()))
                                 <div @class(['relative flex items-start p-4 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50', 'opacity-60' => !$grantable])>
                                     <div class="flex h-6 items-center">
                                         @if(!$grantable && $user->roles->contains($role))
@@ -158,7 +158,7 @@
                                             <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">{{ $role->description }}</p>
                                         @endif
                                         @unless($grantable)
-                                            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Deze rol heeft rechten die jij niet hebt.</p>
+                                            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Alleen admins kunnen beheer- of adminrollen toewijzen.</p>
                                         @endunless
                                     </div>
                                 </div>

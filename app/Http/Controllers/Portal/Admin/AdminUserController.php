@@ -99,14 +99,14 @@ class AdminUserController extends Controller
 
         // Roles the current user may not hand out stay as they are on this user.
         $roles = Role::with('permissions')->get();
-        $grantable = $roles->filter->canBeGrantedBy($request->user())->pluck('id');
+        $grantable = $roles->filter->canBeAssignedTo($request->user())->pluck('id');
         $kept = $user->roles->pluck('id')->diff($grantable);
         $requested = collect($validated['roles'] ?? [])->map(fn ($id) => (int) $id);
 
         if ($requested->diff($grantable)->diff($kept)->isNotEmpty()) {
             return back()->with('error', [
                 'title' => 'Actie niet mogelijk',
-                'message' => 'Je kunt alleen rollen toewijzen met permissies die je zelf hebt.'
+                'message' => 'Je kunt alleen spelersrollen toewijzen. Beheer- en adminrollen zijn voorbehouden aan admins.'
             ]);
         }
 

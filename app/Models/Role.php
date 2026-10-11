@@ -50,4 +50,20 @@ class Role extends Model
         return ! $this->is_admin
             && $this->permissions->pluck('slug')->diff($user->permissionSlugs())->isEmpty();
     }
+
+    /** Users managers can assign player-facing roles, but never grant management or admin access. */
+    public function canBeAssignedTo(User $user): bool
+    {
+        if ($user->isAdmin()) {
+            return true;
+        }
+
+        if (! $user->can('manage-users') || $this->is_admin) {
+            return false;
+        }
+
+        $this->loadMissing('permissions');
+
+        return $this->permissions->every(fn (Permission $permission) => $permission->group === \App\Support\Permissions::PLAYER);
+    }
 }

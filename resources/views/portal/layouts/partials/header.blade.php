@@ -1,4 +1,11 @@
-@php($pageHeading = trim($__env->yieldContent('header')) ?: trim($__env->yieldContent('title', 'Overzicht')))
+@php
+    $headerContent = trim($__env->yieldContent('header'));
+    $pageTitle = trim($__env->yieldContent('title', 'Overzicht'));
+    $hasCustomHeader = str_contains($headerContent, '<');
+    $headerHasTitle = preg_match('/<h[1-6]\b/i', $headerContent) === 1;
+    $pageHeading = $hasCustomHeader ? $pageTitle : ($headerContent ?: $pageTitle);
+    $pageHeading = trim(preg_replace('/\s+/', ' ', strip_tags($pageHeading)));
+@endphp
 <header class="omt-topbar sticky top-0 z-30">
     <div class="omt-topbar-inner mx-auto flex min-h-[4.5rem] max-w-[1440px] items-center gap-x-4 px-4 sm:px-6 xl:px-10">
         <button type="button" @click="sidebarOpen = true" class="omt-menu-button -ml-2 rounded-md p-2 lg:hidden">
@@ -7,8 +14,17 @@
         </button>
 
         <div class="min-w-0 flex-1">
-            <p class="omt-topbar-kicker hidden sm:block">OpenMinetopia <span>/</span> Portaal</p>
-            <h1 class="omt-topbar-title truncate">{{ $pageHeading }}</h1>
+            <p class="omt-topbar-kicker hidden sm:block">Vunex <span>/</span> Portaal</p>
+            @if ($hasCustomHeader)
+                <div class="omt-custom-header">
+                    @unless ($headerHasTitle)
+                        <h1 class="omt-topbar-title">{{ $pageHeading }}</h1>
+                    @endunless
+                    {!! $headerContent !!}
+                </div>
+            @else
+                <h1 class="omt-topbar-title truncate">{{ $pageHeading }}</h1>
+            @endif
         </div>
 
         @php($unread = auth()->user()->unreadNotifications->count())

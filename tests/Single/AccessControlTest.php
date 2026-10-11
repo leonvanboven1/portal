@@ -133,6 +133,26 @@ it('does not let a user manager make someone admin', function () {
     expect($other->fresh()->isAdmin())->toBeFalse();
 });
 
+it('lets a user manager assign player roles but not management roles', function () {
+    $manager = player([roleWith('manage-users')]);
+    $other = player();
+    $defaultPlayerRoleId = $other->roles->first()->id;
+    $playerRole = roleWith('use-bank');
+    $managementRole = roleWith('manage-settings');
+
+    $this->actingAs($manager)->post("http://portaal.test/portal/admin/users/{$other->id}/roles", [
+        'roles' => [$defaultPlayerRoleId, $playerRole->id],
+    ])->assertSessionHas('success');
+
+    expect($other->fresh()->roles->contains('id', $playerRole->id))->toBeTrue();
+
+    $this->post("http://portaal.test/portal/admin/users/{$other->id}/roles", [
+        'roles' => [$defaultPlayerRoleId, $playerRole->id, $managementRole->id],
+    ])->assertSessionHas('error');
+
+    expect($other->fresh()->roles->contains('id', $managementRole->id))->toBeFalse();
+});
+
 it('reaches company management at /portal/companies/manage', function () {
     turnOn('companies');
     $user = player([roleWith('manage-companies')]);
