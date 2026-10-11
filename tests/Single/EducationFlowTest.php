@@ -7,6 +7,7 @@ use App\Models\Permission;
 use App\Models\PortalFeature;
 use App\Models\Role;
 use App\Models\User;
+use App\Services\EducationService;
 use App\Services\Plugin\BankingService;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
@@ -62,6 +63,8 @@ it('shows a roadmap and enforces its prerequisite, payment, duration, and compan
         'price' => 50,
         'qualifies_for_company' => true,
     ]);
+    expect($first->fresh()->qualifies_for_company)->toBeTrue()
+        ->and(app(EducationService::class)->canCreateCompany($this->player))->toBeFalse();
     $next = educationCourse(['title' => 'Ondernemen in de praktijk']);
     $next->prerequisites()->attach($first);
     $companyType = CompanyType::create([
@@ -91,11 +94,14 @@ it('shows a roadmap and enforces its prerequisite, payment, duration, and compan
     expect($enrollment->status)->toBe('in_progress')
         ->and($this->bank->balance('education-player'))->toBe(200.0)
         ->and($this->bank->balance('education-town'))->toBe(0.0)
-        ->and($this->bank->deposits())->toBe([]);
+        ->and($this->bank->deposits())->toBe([])
+        ->and($first->fresh()->qualifies_for_company)->toBeTrue()
+        ->and(app(\App\Services\EducationService::class)->canCreateCompany($this->player))->toBeFalse();
 
     $this->get(EDUCATION_BASE.'/portal/companies')
         ->assertOk()
-        ->assertDontSee('portal/companies/register')
+        ->assertDontSeeText('Nieuw Bedrijf')
+        ->assertSeeText('Opleiding afronden')
         ->assertSee('Naar opleidingen');
     $this->get(EDUCATION_BASE.'/portal/companies/register')->assertRedirect(EDUCATION_BASE.'/opleidingen');
     $this->post(EDUCATION_BASE."/portal/companies/{$companyType->id}/request", [])

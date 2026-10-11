@@ -69,7 +69,7 @@
             <section class="omt-education-form-section">
                 <div class="omt-education-form-heading">
                     <span>03</span>
-                    <div><h2>Toegang en publicatie</h2><p>Leg vast of deze opleiding een extra bevoegdheid oplevert.</p></div>
+                    <div><h2>Toegang en publicatie</h2><p>Nieuwe opleidingen geven standaard toegang tot bedrijfsaanvragen; zet dit uit als de opleiding vrijblijvend is.</p></div>
                 </div>
                 <div class="space-y-3">
                     <label class="omt-education-toggle">

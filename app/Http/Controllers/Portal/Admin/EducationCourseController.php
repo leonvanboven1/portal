@@ -19,7 +19,7 @@ class EducationCourseController extends Controller
     public function create()
     {
         return view('portal.admin.education.form', [
-            'course' => new EducationCourse(['duration_hours' => 24, 'price' => 0]),
+            'course' => new EducationCourse(['duration_hours' => 24, 'price' => 0, 'qualifies_for_company' => true]),
             'courses' => EducationCourse::orderBy('title')->get(),
         ]);
     }
