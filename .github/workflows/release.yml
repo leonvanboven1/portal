@@ -19,9 +19,9 @@ jobs:
       matrix:
         include:
           - target: app
-            image: ghcr.io/openminetopia/portal
+            image: ghcr.io/leonvanboven1/portal
           - target: pterodactyl
-            image: ghcr.io/openminetopia/portal-pterodactyl
+            image: ghcr.io/leonvanboven1/portal-pterodactyl
 
     steps:
       - uses: actions/checkout@v4

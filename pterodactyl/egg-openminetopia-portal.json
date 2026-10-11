@@ -10,8 +10,7 @@
     "description": "Het webportaal voor een Minecraft-server met de OpenMinetopia-plugin: bank, plots, makelaar, bedrijven, vergunningen en politie. Maak eerst een database aan op het tabblad Databases en vul die gegevens in bij Startup. Bij de eerste start toont de console de regels voor de config.yml van de plugin en een link om beheerder te worden. Het portaal luistert met HTTP op de poort van deze server; zet er voor HTTPS een reverse proxy of Cloudflare voor.",
     "features": null,
     "docker_images": {
-        "OpenMinetopia Portal": "ghcr.io/openminetopia/portal-pterodactyl:latest",
-        "Your fork": "ghcr.io/leonvanboven1/portal-pterodactyl:latest"
+        "Portal (leonvanboven1)": "ghcr.io/leonvanboven1/portal-pterodactyl:latest"
     },
     "file_denylist": [],
     "startup": "portal-start",
@@ -24,7 +23,7 @@
     "scripts": {
         "installation": {
             "script": "#!/bin/bash\n# The app lives in the image; the server's folder only holds .env and storage.\nset -e\ncd /mnt/server\nmkdir -p storage/app/public storage/logs storage/framework/cache/data storage/framework/sessions storage/framework/views\ntouch .env\necho \"Klaar. Start de server: het portaal richt zichzelf in met de variabelen van deze server.\"\n",
-            "container": "ghcr.io/openminetopia/portal-pterodactyl:latest",
+            "container": "ghcr.io/leonvanboven1/portal-pterodactyl:latest",
             "entrypoint": "bash"
         }
     },
