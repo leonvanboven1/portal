@@ -11,7 +11,7 @@
     "features": null,
     "docker_images": {
         "OpenMinetopia Portal": "ghcr.io/openminetopia/portal-pterodactyl:latest",
-        "Your fork": "ghcr.io/your-user/portal-pterodactyl:latest"
+        "Your fork": "ghcr.io/leonvanboven1/portal-pterodactyl:latest"
     },
     "file_denylist": [],
     "startup": "portal-start",
