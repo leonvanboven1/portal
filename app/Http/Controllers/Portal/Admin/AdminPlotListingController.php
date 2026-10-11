@@ -52,7 +52,7 @@ class AdminPlotListingController extends Controller
     {
         $validated = $request->validate([
             'price' => 'required|numeric|min:0',
-            'description' => 'required|string|max:1000',
+            'description' => 'nullable|string|max:1000',
             'image' => 'nullable|image|max:'.Portal::maxUploadKilobytes(),
             'instant_buy' => 'nullable|boolean',
             'payout_bank_account_uuid' => 'nullable|string'
@@ -88,7 +88,7 @@ class AdminPlotListingController extends Controller
             'is_server_listing' => true,
             'payout_bank_account_uuid' => $validated['payout_bank_account_uuid'] ?? null,
             'price' => $validated['price'],
-            'description' => $validated['description'],
+            'description' => $validated['description'] ?? '',
             'image_path' => $imagePath,
             'min_x' => $plot['location']['min']['x'] ?? 0,
             'min_y' => $plot['location']['min']['y'] ?? 0,

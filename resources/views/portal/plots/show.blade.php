@@ -92,12 +92,12 @@
                                     </span>
                                 </dd>
                             </div>
-                            <div class="sm:col-span-2">
-                                <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Beschrijving</dt>
-                                <dd class="mt-1 text-sm text-gray-900 dark:text-white">
-                                    {{ $activeListing->description }}
-                                </dd>
-                            </div>
+                            @if (filled($activeListing->description))
+                                <div class="sm:col-span-2">
+                                    <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Beschrijving</dt>
+                                    <dd class="mt-1 text-sm text-gray-900 dark:text-white">{{ $activeListing->description }}</dd>
+                                </div>
+                            @endif
                             @if($activeListing->image_path)
                                 <div class="sm:col-span-2">
                                     <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Afbeelding</dt>
@@ -167,10 +167,12 @@
                             <dd class="mt-1 text-gray-900 dark:text-white">{{ $rental->status_text }} · betaald tot {{ $rental->paid_until->format('d-m-Y') }}</dd>
                         </div>
                     @else
-                        <div class="sm:col-span-2">
-                            <dt class="font-medium text-gray-500 dark:text-gray-400">Beschrijving</dt>
-                            <dd class="mt-1 text-gray-900 dark:text-white">{{ $rentalOffer->description }}</dd>
-                        </div>
+                        @if (filled($rentalOffer->description))
+                            <div class="sm:col-span-2">
+                                <dt class="font-medium text-gray-500 dark:text-gray-400">Beschrijving</dt>
+                                <dd class="mt-1 text-gray-900 dark:text-white">{{ $rentalOffer->description }}</dd>
+                            </div>
+                        @endif
                     @endif
                 </dl>
             </div>

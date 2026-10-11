@@ -156,7 +156,7 @@ class PlotRentalOfferController extends Controller
         return $request->validate([
             'price' => 'required|numeric|min:0.01|max:99999999',
             'period' => 'required|in:week,month',
-            'description' => 'required|string|max:1000',
+            'description' => 'nullable|string|max:1000',
             'image' => 'nullable|image|max:'.Portal::maxUploadKilobytes(),
             'payout_bank_account_uuid' => ($payoutRequired ? 'required' : 'nullable').'|string',
         ], [
@@ -174,7 +174,7 @@ class PlotRentalOfferController extends Controller
             'payout_bank_account_uuid' => $validated['payout_bank_account_uuid'] ?? null,
             'price' => $validated['price'],
             'period' => $validated['period'],
-            'description' => $validated['description'],
+            'description' => $validated['description'] ?? '',
             'image_path' => $imagePath ?? ($request->hasFile('image') ? $request->file('image')->store('plot-listings', 'public') : null),
             'min_x' => $plot['location']['min']['x'] ?? 0,
             'min_y' => $plot['location']['min']['y'] ?? 0,

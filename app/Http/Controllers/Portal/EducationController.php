@@ -20,6 +20,7 @@ class EducationController extends Controller
         return view('portal.education.index', [
             'roadmap' => $this->education->roadmap(auth()->user()),
             'companyRequirementCount' => $this->education->companyRequirementCount(),
+            'companyAccessIssue' => $this->education->companyAccessIssue(auth()->user()),
             'bankAccounts' => collect(auth()->user()->bank_accounts),
         ]);
     }

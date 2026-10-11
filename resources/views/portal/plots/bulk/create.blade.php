@@ -122,11 +122,12 @@
                     <div class="space-y-2">
                         <label for="description" class="{{ $label }}">
                             <x-heroicon-s-document-text class="w-5 h-5 text-gray-400"/>
-                            Beschrijving <span class="text-red-500">*</span>
+                            Beschrijving <span class="text-gray-400">(optioneel)</span>
                         </label>
-                        <textarea id="description" name="description" rows="5" maxlength="1000" required
+                        <textarea id="description" name="description" rows="5" maxlength="1000"
                                   placeholder="Dezelfde beschrijving voor elk plot"
                                   class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white p-4">{{ old('description') }}</textarea>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">Leeg laten? Dan verschijnt er geen beschrijving bij de makelaar.</p>
                     </div>
 
                     <div class="space-y-2">

@@ -101,6 +101,20 @@ it('lets an owner offer a plot for rent and a player rent it', function () {
     $this->get(BASE.'/plots/te-koop?soort=huur')->assertDontSee('/plots/te-huur/'.$offer->id.'/huren');
 });
 
+it('lets an owner rent out a plot without a description', function () {
+    $this->actingAs($this->owner)->post(BASE.'/plots/kade_1/verhuren', [
+        'price' => 150,
+        'period' => 'week',
+        'payout_bank_account_uuid' => 'acc-owner',
+    ])->assertSessionHas('success');
+
+    expect(PlotRentalOffer::sole()->description)->toBe('');
+
+    $this->get(BASE.'/plots/te-koop?soort=huur')
+        ->assertOk()
+        ->assertDontSee('class="mt-4 text-sm text-gray-600 dark:text-gray-300"', false);
+});
+
 it('does not let a player rent with someone else\'s account or without enough money', function () {
     $offer = offerKade($this->owner);
 

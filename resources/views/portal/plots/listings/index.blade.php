@@ -67,9 +67,11 @@
                             </span>
                         </div>
 
-                        <p class="mt-4 text-sm text-gray-600 dark:text-gray-300">
-                            {{ Str::limit($listing->description, 150) }}
-                        </p>
+                        @if (filled($listing->description))
+                            <p class="mt-4 text-sm text-gray-600 dark:text-gray-300">
+                                {{ Str::limit($listing->description, 150) }}
+                            </p>
+                        @endif
 
                         <div class="mt-4 flex items-center justify-between text-sm">
                             <div class="text-gray-500 dark:text-gray-400">
@@ -144,7 +146,9 @@
                             </span>
                         </div>
 
-                        <p class="mt-4 text-sm text-gray-600 dark:text-gray-300">{{ Str::limit($offer->description, 150) }}</p>
+                        @if (filled($offer->description))
+                            <p class="mt-4 text-sm text-gray-600 dark:text-gray-300">{{ Str::limit($offer->description, 150) }}</p>
+                        @endif
 
                         <div class="mt-4 flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
                             <span class="flex items-center gap-1">

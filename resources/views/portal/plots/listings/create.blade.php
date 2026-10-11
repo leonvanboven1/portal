@@ -162,7 +162,7 @@
                             <label for="description"
                                    class="flex items-center gap-2 text-sm font-medium text-gray-900 dark:text-gray-100">
                                 <x-heroicon-s-document-text class="w-5 h-5 text-gray-400"/>
-                                Beschrijving <span class="text-red-500">*</span>
+                                Beschrijving <span class="text-gray-400">(optioneel)</span>
                             </label>
                             <div class="relative">
                             <textarea id="description"
@@ -170,12 +170,12 @@
                                       rows="6"
                                       class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white resize-none p-4"
                                       style="padding: 1rem !important;"
-                                      required
                                       placeholder="Beschrijf je plot hier..."></textarea>
                                 <div class="absolute bottom-3 right-3 text-xs text-gray-400">
                                     <span id="charCount">0</span>/1000
                                 </div>
                             </div>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">Leeg laten? Dan verschijnt er geen beschrijving bij de makelaar.</p>
                             <div class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4 space-y-3">
                                 <h4 class="text-sm font-medium text-gray-700 dark:text-gray-300">Tips voor een goede
                                     beschrijving:</h4>

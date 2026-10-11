@@ -52,10 +52,12 @@
                             </span>
                         </div>
 
-                        <div class="mt-6">
-                            <h3 class="text-sm font-medium text-gray-700 dark:text-gray-300">Beschrijving</h3>
-                            <p class="mt-2 text-sm text-gray-600 dark:text-gray-300">{{ $listing->description }}</p>
-                        </div>
+                        @if (filled($listing->description))
+                            <div class="mt-6">
+                                <h3 class="text-sm font-medium text-gray-700 dark:text-gray-300">Beschrijving</h3>
+                                <p class="mt-2 text-sm text-gray-600 dark:text-gray-300">{{ $listing->description }}</p>
+                            </div>
+                        @endif
 
                         <!-- Plot Specifications -->
                         <div class="mt-6 grid grid-cols-2 gap-6 pt-6 border-t border-gray-200 dark:border-gray-700">

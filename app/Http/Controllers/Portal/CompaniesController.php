@@ -38,11 +38,13 @@ class CompaniesController extends Controller
             ->with(['type', 'handler'])
             ->latest()
             ->get();
+        $companyAccessIssue = $this->education->companyAccessIssue(auth()->user());
 
         return view('portal.companies.index', [
             'companies' => $companies,
             'requests' => $requests,
-            'canCreateCompany' => $this->education->canCreateCompany(auth()->user()),
+            'companyAccessIssue' => $companyAccessIssue,
+            'canCreateCompany' => $companyAccessIssue === null,
         ]);
     }
 

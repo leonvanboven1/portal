@@ -74,7 +74,7 @@ class PlotListingController extends Controller
     {
         $validated = $request->validate([
             'price' => 'required|numeric|min:0',
-            'description' => 'required|string|max:1000',
+            'description' => 'nullable|string|max:1000',
             'image' => 'nullable|image|max:'.Portal::maxUploadKilobytes(),
             'instant_buy' => 'nullable|boolean',
             'payout_bank_account_uuid' => 'required|string'
@@ -107,7 +107,7 @@ class PlotListingController extends Controller
             'seller_id' => auth()->id(),
             'payout_bank_account_uuid' => $validated['payout_bank_account_uuid'],
             'price' => $validated['price'],
-            'description' => $validated['description'],
+            'description' => $validated['description'] ?? '',
             'image_path' => $imagePath,
             'min_x' => $plot['location']['min']['x'],
             'min_y' => $plot['location']['min']['y'],

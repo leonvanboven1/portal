@@ -45,25 +45,47 @@ class EducationService
     /** Whether a player can submit a company request under the configured education gate. */
     public function canCreateCompany(User $user): bool
     {
+        return $this->companyAccessIssue($user) === null;
+    }
+
+    /** Why company applications are unavailable, or null when the player can apply. */
+    public function companyAccessIssue(User $user): ?string
+    {
         if (! Features::enabled('education')) {
-            return true;
+            return null;
+        }
+
+        if (! Features::enabled('companies')) {
+            return 'companies_disabled';
+        }
+
+        if (! $user->can('use-companies')) {
+            return 'company_permission_missing';
         }
 
         $this->completeDue($user);
 
         $requiredCourses = EducationCourse::where('qualifies_for_company', true)->pluck('id');
         if ($requiredCourses->isEmpty()) {
-            return false;
+            return 'no_qualifying_course';
         }
 
-        return EducationEnrollment::where('user_id', $user->id)
+        if (EducationEnrollment::where('user_id', $user->id)
             ->whereIn('education_course_id', $requiredCourses)
             ->where('status', 'completed')
-            ->exists();
+            ->exists()) {
+            return null;
+        }
+
+        if (! EducationCourse::whereIn('id', $requiredCourses)->where('is_active', true)->exists()) {
+            return 'course_unavailable';
+        }
+
+        return 'course_incomplete';
     }
 
     public function companyRequirementCount(): int
     {
-        return EducationCourse::active()->where('qualifies_for_company', true)->count();
+        return EducationCourse::where('qualifies_for_company', true)->count();
     }
 }

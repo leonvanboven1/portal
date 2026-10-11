@@ -194,3 +194,17 @@ it('still puts a single plot up for sale the old way', function () {
 
     expect(PlotListing::sole()->only(['plot_name', 'price', 'instant_buy']))->toBe(['plot_name' => 'straat_1', 'price' => '3000.00', 'instant_buy' => true]);
 });
+
+it('lets a player sell a plot without a description', function () {
+    $this->actingAs($this->owner)->post(BULK_URL.'/plots/straat_1/verkopen', [
+        'price' => 3000,
+        'instant_buy' => '1',
+        'payout_bank_account_uuid' => 'acc-bulk-owner',
+    ])->assertRedirect(BULK_URL.'/portal/plots/straat_1');
+
+    expect(PlotListing::sole()->description)->toBe('');
+
+    $this->actingAs($this->owner)->get(BULK_URL.'/plots/te-koop')
+        ->assertOk()
+        ->assertDontSee('class="mt-4 text-sm text-gray-600 dark:text-gray-300"', false);
+});

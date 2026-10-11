@@ -150,6 +150,7 @@ it('keeps company access locked until an active qualifying course is configured'
     $this->get(EDUCATION_BASE.'/portal/companies')
         ->assertOk()
         ->assertDontSeeText('Nieuw Bedrijf')
+        ->assertSeeText('Er is nog geen opleiding ingesteld')
         ->assertSeeText('Opleiding afronden');
 });
 

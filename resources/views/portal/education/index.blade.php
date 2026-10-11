@@ -22,10 +22,28 @@
             </div>
         </section>
 
-        @if ($companyRequirementCount > 0)
+        @if ($companyAccessIssue)
             <div class="omt-learning-notice">
                 <x-heroicon-o-building-office class="h-5 w-5" />
-                <p>Voor een bedrijfsaanvraag moet je minimaal één opleiding afronden die toegang geeft tot bedrijven.</p>
+                <p>
+                    @switch($companyAccessIssue)
+                        @case('companies_disabled')
+                            De functie Bedrijven staat uit. Vraag een beheerder om deze functie in te schakelen.
+                            @break
+                        @case('company_permission_missing')
+                            Je rol heeft geen toegang tot Bedrijven. Vraag een beheerder om de permissie Bedrijven aan je rol toe te voegen.
+                            @break
+                        @case('no_qualifying_course')
+                            Er is nog geen opleiding ingesteld die toegang geeft tot bedrijfsaanvragen. Een beheerder kan dit aanvinken bij Opleidingen beheren.
+                            @break
+                        @case('course_unavailable')
+                            De opleiding die toegang geeft tot bedrijven is niet beschikbaar. Vraag een beheerder om die opleiding weer te activeren.
+                            @break
+                        @default
+                            Rond eerst een opleiding af die toegang geeft tot bedrijfsaanvragen.
+                    @endswitch
+                    <a class="font-semibold underline" href="{{ route('portal.education.index') }}">Bekijk je leerroute</a>.
+                </p>
             </div>
         @endif
 

@@ -52,10 +52,12 @@
                                 {{ $offer->formatted_price }} {{ $offer->period_text }}
                             </span>
                         </div>
-                        <div class="mt-6">
-                            <h3 class="text-sm font-medium text-gray-700 dark:text-gray-300">Beschrijving</h3>
-                            <p class="mt-2 text-sm text-gray-600 dark:text-gray-300 whitespace-pre-line">{{ $offer->description }}</p>
-                        </div>
+                        @if (filled($offer->description))
+                            <div class="mt-6">
+                                <h3 class="text-sm font-medium text-gray-700 dark:text-gray-300">Beschrijving</h3>
+                                <p class="mt-2 text-sm text-gray-600 dark:text-gray-300 whitespace-pre-line">{{ $offer->description }}</p>
+                            </div>
+                        @endif
                         <dl class="mt-6 grid grid-cols-2 gap-6 pt-6 border-t border-gray-200 dark:border-gray-700 text-sm">
                             <div>
                                 <dt class="font-medium text-gray-700 dark:text-gray-300">Afmetingen</dt>
