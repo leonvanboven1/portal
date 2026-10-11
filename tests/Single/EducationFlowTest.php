@@ -60,7 +60,6 @@ it('shows a roadmap and enforces its prerequisite, payment, duration, and compan
     $first = educationCourse([
         'title' => 'Ondernemersbasis',
         'price' => 50,
-        'payout_bank_account_uuid' => 'education-town',
         'qualifies_for_company' => true,
     ]);
     $next = educationCourse(['title' => 'Ondernemen in de praktijk']);
@@ -91,7 +90,8 @@ it('shows a roadmap and enforces its prerequisite, payment, duration, and compan
     $enrollment = EducationEnrollment::sole();
     expect($enrollment->status)->toBe('in_progress')
         ->and($this->bank->balance('education-player'))->toBe(200.0)
-        ->and($this->bank->balance('education-town'))->toBe(50.0);
+        ->and($this->bank->balance('education-town'))->toBe(0.0)
+        ->and($this->bank->deposits())->toBe([]);
 
     $this->get(EDUCATION_BASE.'/portal/companies/register')->assertRedirect(EDUCATION_BASE.'/opleidingen');
     $this->post(EDUCATION_BASE."/portal/companies/{$companyType->id}/request", [])
@@ -122,8 +122,8 @@ it('allows only the education manager permission into course administration', fu
     $this->actingAs($manager)->get(EDUCATION_BASE.'/portal/admin/opleidingen')->assertOk();
     $this->get(EDUCATION_BASE.'/portal/admin/opleidingen/aanmaken')
         ->assertOk()
-        ->assertSee('education-town')
-        ->assertDontSee('education-player');
+        ->assertDontSee('Ontvangst rekening')
+        ->assertDontSee('education-town');
     $this->actingAs($this->player)->get(EDUCATION_BASE.'/portal/admin/opleidingen')->assertForbidden();
 });
 

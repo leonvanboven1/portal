@@ -41,19 +41,6 @@
                         <input id="duration_hours" name="duration_hours" type="number" min="1" max="8760" step="1" value="{{ old('duration_hours', $course->duration_hours ?? 24) }}" required>
                         @error('duration_hours')<p class="omt-form-error">{{ $message }}</p>@enderror
                     </div>
-                    <div class="sm:col-span-2">
-                        <label for="payout_bank_account_uuid">Ontvangst rekening</label>
-                        <select id="payout_bank_account_uuid" name="payout_bank_account_uuid">
-                            <option value="">Geen rekening gekozen (alleen voor gratis opleidingen)</option>
-                            @foreach ($bankAccounts as $account)
-                                <option value="{{ $account['uuid'] }}" @selected(old('payout_bank_account_uuid', $course->payout_bank_account_uuid) === $account['uuid'])>
-                                    {{ $account['name'] }} · € {{ number_format($account['balance'], 2, ',', '.') }}
-                                </option>
-                            @endforeach
-                        </select>
-                        <p class="omt-form-help">Betaalde inschrijvingen worden naar deze rekening overgemaakt.</p>
-                        @error('payout_bank_account_uuid')<p class="omt-form-error">{{ $message }}</p>@enderror
-                    </div>
                 </div>
             </section>
 

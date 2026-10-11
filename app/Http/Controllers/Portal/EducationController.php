@@ -58,21 +58,8 @@ class EducationController extends Controller
             if ($account['balance'] < $course->price) {
                 return back()->withInput()->withErrors(['payer_bank_account_uuid' => 'Op deze bankrekening staat niet genoeg geld.']);
             }
-            if (! $course->payout_bank_account_uuid) {
-                return back()->with('error', [
-                    'title' => 'Opleiding tijdelijk niet beschikbaar',
-                    'message' => 'Voor deze opleiding is nog geen betaalrekening ingesteld.',
-                ]);
-            }
-
             if (! $this->banking->withdraw($payerUuid, (float) $course->price)) {
                 return back()->with('error', ['title' => 'Betaling mislukt', 'message' => 'Het bedrag kon niet van je rekening worden afgeschreven.']);
-            }
-
-            if (! $this->banking->deposit($course->payout_bank_account_uuid, (float) $course->price)) {
-                $this->banking->deposit($payerUuid, (float) $course->price);
-
-                return back()->with('error', ['title' => 'Betaling mislukt', 'message' => 'De opleidingskosten konden niet worden verwerkt. Er is geprobeerd het bedrag terug te storten.']);
             }
         }
 
@@ -80,7 +67,6 @@ class EducationController extends Controller
             'user_id' => auth()->id(),
             'education_course_id' => $course->id,
             'payer_bank_account_uuid' => $payerUuid,
-            'payout_bank_account_uuid' => $course->payout_bank_account_uuid,
             'amount_paid' => $course->price,
             'started_at' => now(),
             'completes_at' => now()->addHours($course->duration_hours),

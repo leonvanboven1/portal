@@ -4,17 +4,11 @@ namespace App\Http\Controllers\Portal\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\EducationCourse;
-use App\Services\Plugin\BankingService;
 use Illuminate\Http\Request;
-use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Str;
 
 class EducationCourseController extends Controller
 {
-    public function __construct(private BankingService $banking)
-    {
-    }
-
     public function index()
     {
         return view('portal.admin.education.index', [
@@ -27,7 +21,6 @@ class EducationCourseController extends Controller
         return view('portal.admin.education.form', [
             'course' => new EducationCourse(['duration_hours' => 24, 'price' => 0]),
             'courses' => EducationCourse::orderBy('title')->get(),
-            'bankAccounts' => $this->payoutBankAccounts(),
         ]);
     }
 
@@ -39,6 +32,7 @@ class EducationCourseController extends Controller
         }
 
         $slug = Str::slug($validated['title']) ?: 'opleiding';
+        $validated['payout_bank_account_uuid'] = null;
         $course = EducationCourse::create($validated + ['slug' => $slug.'-'.Str::lower(Str::random(6))]);
         $course->prerequisites()->sync($validated['prerequisites'] ?? []);
 
@@ -50,7 +44,6 @@ class EducationCourseController extends Controller
         return view('portal.admin.education.form', [
             'course' => $course->load('prerequisites'),
             'courses' => EducationCourse::where('id', '!=', $course->id)->orderBy('title')->get(),
-            'bankAccounts' => $this->payoutBankAccounts(),
         ]);
     }
 
@@ -61,6 +54,7 @@ class EducationCourseController extends Controller
             return back()->withInput()->withErrors(['prerequisites' => $message]);
         }
 
+        $validated['payout_bank_account_uuid'] = null;
         $course->fill($validated);
         $course->save();
         $course->prerequisites()->sync($validated['prerequisites'] ?? []);
@@ -90,7 +84,6 @@ class EducationCourseController extends Controller
             'description' => 'nullable|string|max:2000',
             'price' => 'required|numeric|min:0|max:99999999',
             'duration_hours' => 'required|integer|min:1|max:8760',
-            'payout_bank_account_uuid' => 'nullable|string|max:255',
             'prerequisites' => 'nullable|array|max:20',
             'prerequisites.*' => 'integer|distinct|exists:education_courses,id',
             'qualifies_for_company' => 'nullable|boolean',
@@ -101,29 +94,10 @@ class EducationCourseController extends Controller
             'duration_hours.max' => 'Een opleiding kan maximaal één jaar duren.',
         ]);
 
-        if ((float) $validated['price'] > 0 && empty($validated['payout_bank_account_uuid'])) {
-            return $request->validate(['payout_bank_account_uuid' => 'required|string'], [
-                'payout_bank_account_uuid.required' => 'Kies de rekening waarop de opleidingskosten worden gestort.',
-            ]);
-        }
-
-        if (! empty($validated['payout_bank_account_uuid']) && ! $this->payoutBankAccounts()->contains('uuid', $validated['payout_bank_account_uuid'])) {
-            throw ValidationException::withMessages([
-                'payout_bank_account_uuid' => 'Kies een beschikbare overheids- of bedrijfsrekening.',
-            ]);
-        }
-
         $validated['qualifies_for_company'] = $request->boolean('qualifies_for_company');
         $validated['is_active'] = $request->boolean('is_active');
 
         return $validated;
-    }
-
-    private function payoutBankAccounts()
-    {
-        return collect($this->banking->getAllBankAccounts())
-            ->where('type', '!=', 'PRIVATE')
-            ->values();
     }
 
     private function invalidPrerequisiteChain(array $prerequisiteIds, ?int $courseId): ?string

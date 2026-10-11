@@ -54,14 +54,6 @@ class FakeBankingService extends BankingService
             ->values()->all();
     }
 
-    public function getAllBankAccounts(): array
-    {
-        return collect($this->accounts)
-            ->map(fn ($account, $uuid) => array_merge($account, ['uuid' => $uuid]))
-            ->values()
-            ->all();
-    }
-
     public function withdraw(string $uuid, float $amount): bool
     {
         if (! isset($this->accounts[$uuid]) || $this->accounts[$uuid]['balance'] < $amount) {
