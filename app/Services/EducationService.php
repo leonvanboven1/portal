@@ -51,7 +51,7 @@ class EducationService
 
         $this->completeDue($user);
 
-        $requiredCourses = EducationCourse::active()->where('qualifies_for_company', true)->pluck('id');
+        $requiredCourses = EducationCourse::where('qualifies_for_company', true)->pluck('id');
         if ($requiredCourses->isEmpty()) {
             return false;
         }

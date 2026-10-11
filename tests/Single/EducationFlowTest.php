@@ -115,6 +115,10 @@ it('shows a roadmap and enforces its prerequisite, payment, duration, and compan
     $this->get(EDUCATION_BASE.'/opleidingen')->assertSee('Afgerond');
     expect($enrollment->fresh()->status)->toBe('completed');
 
+    $first->update(['is_active' => false]);
+    expect(app(EducationService::class)->canCreateCompany($this->player))->toBeTrue();
+    $this->get(EDUCATION_BASE.'/')->assertOk()->assertSeeText('Mijn bedrijven');
+
     $this->get(EDUCATION_BASE.'/portal/companies/register')->assertOk();
     $this->get(EDUCATION_BASE.'/portal/companies')->assertOk()->assertSee('Nieuw Bedrijf');
     $this->post(EDUCATION_BASE."/portal/companies/{$companyType->id}/request", [])
