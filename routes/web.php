@@ -73,7 +73,7 @@ Route::middleware('auth')->group(function () {
     Route::middleware('minecraft.verified')->group(function () {
         Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
-        Route::middleware(['feature:education', 'can:use-education'])->prefix('opleidingen')->name('education.')->group(function () {
+        Route::middleware(['feature:education', 'can:use-education'])->prefix('opleidingen')->name('portal.education.')->group(function () {
             Route::get('/', [EducationController::class, 'index'])->name('index');
             Route::post('/{course}/start', [EducationController::class, 'enroll'])->name('enroll');
         });
