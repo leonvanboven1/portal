@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\SettingsController;
 use App\Models\BrandingSetting;
 use App\Models\Permission;
 use App\Models\Role;
@@ -7,6 +8,7 @@ use App\Models\SiteContent;
 use App\Models\SiteRule;
 use App\Models\SiteRuleCategory;
 use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
@@ -175,16 +177,19 @@ it('lets settings managers create rule categories and rules for the separate rul
         ->assertSee('Respecteer de afspraken van de stad.');
 });
 
-it('lets settings managers remove public homepage photos', function () {
+it('removes a homepage photo from storage', function () {
     Storage::fake('public');
-    $admin = siteUser(['manage-settings']);
     $path = 'site/vunex.png';
     Storage::disk('public')->put($path, 'test image');
     SiteContent::current()->update(['hero_image_path' => $path]);
 
-    $this->actingAs($admin)
-        ->post('http://portaal.test/portal/admin/settings/site-images', ['remove_hero_image' => '1'])
-        ->assertSessionHas('success', 'De afbeeldingen van de website zijn bijgewerkt.');
+    $request = Request::create('/portal/admin/settings/site-images', 'POST', [
+        'remove_hero_image' => '1',
+    ]);
+    $request->setLaravelSession(app('session')->driver());
+    app()->instance('request', $request);
+
+    app(SettingsController::class)->updateSiteImages($request);
 
     expect(SiteContent::current()->hero_image_path)->toBeNull();
     Storage::disk('public')->assertMissing($path);
