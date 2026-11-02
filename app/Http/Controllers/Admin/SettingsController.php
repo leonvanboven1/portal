@@ -58,7 +58,6 @@ class SettingsController extends Controller
         ]);
 
         $content = SiteContent::current();
-        $publicDisk = Storage::disk('public');
         $replacedPaths = [];
 
         foreach ([
@@ -75,7 +74,7 @@ class SettingsController extends Controller
             $content->{$column} = null;
 
             if ($request->hasFile($input)) {
-                $path = $publicDisk->putFile('site', $request->file($input));
+                $path = $request->file($input)->store('site', 'public');
                 if (! $path) {
                     throw new RuntimeException("Het opslaan van de afbeelding {$input} is mislukt.");
                 }
@@ -86,7 +85,7 @@ class SettingsController extends Controller
         $content->save();
 
         foreach (array_filter($replacedPaths) as $path) {
-            if ($publicDisk->exists($path) && (! $publicDisk->delete($path) || $publicDisk->exists($path))) {
+            if (! Storage::disk('public')->delete($path) && Storage::disk('public')->exists($path)) {
                 throw new RuntimeException("Het verwijderen van de oude website-afbeelding {$path} is mislukt.");
             }
         }
