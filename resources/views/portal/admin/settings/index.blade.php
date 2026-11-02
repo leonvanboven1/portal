@@ -64,7 +64,6 @@
             </div>
             <form action="{{ route('portal.admin.settings.update-site-images') }}" method="POST" enctype="multipart/form-data" class="grid gap-6 p-4 sm:grid-cols-2 sm:p-6 lg:grid-cols-4">
                 @csrf
-                @method('PUT')
                 @foreach([
                     'hero_image' => ['Hoofdfoto', 'hero_image_path'],
                     'unique_image' => ['Vunex uniek-foto', 'unique_image_path'],

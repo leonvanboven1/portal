@@ -167,7 +167,7 @@ Route::middleware('auth')->group(function () {
                     Route::get('settings', [SettingsController::class, 'index'])->name('settings.index');
                     Route::put('settings/features', [SettingsController::class, 'updateFeatures'])->name('settings.update-features');
                     Route::put('settings/site-content', [SettingsController::class, 'updateSiteContent'])->name('settings.update-site-content');
-                    Route::put('settings/site-images', [SettingsController::class, 'updateSiteImages'])->name('settings.update-site-images');
+                    Route::post('settings/site-images', [SettingsController::class, 'updateSiteImages'])->name('settings.update-site-images');
                     Route::post('settings/site-rules/categories', [SettingsController::class, 'storeSiteRuleCategory'])->name('settings.site-rules.categories.store');
                     Route::delete('settings/site-rules/categories/{category}', [SettingsController::class, 'destroySiteRuleCategory'])->name('settings.site-rules.categories.destroy');
                     Route::post('settings/site-rules/categories/{category}/rules', [SettingsController::class, 'storeSiteRule'])->name('settings.site-rules.store');
