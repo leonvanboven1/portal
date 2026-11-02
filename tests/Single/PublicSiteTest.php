@@ -178,7 +178,8 @@ it('lets settings managers create rule categories and rules for the separate rul
 it('lets settings managers remove public homepage photos', function () {
     Storage::fake('public');
     $admin = siteUser(['manage-settings']);
-    $path = UploadedFile::fake()->image('vunex.png')->store('site', 'public');
+    $path = 'site/vunex.png';
+    Storage::disk('public')->put($path, 'test image');
     SiteContent::current()->update(['hero_image_path' => $path]);
 
     $this->actingAs($admin)
