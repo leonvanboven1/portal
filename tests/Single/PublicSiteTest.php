@@ -77,8 +77,13 @@ it('lets only settings managers update public website content', function () {
         'rules_title' => 'Onze afspraken',
         'rules_text' => "<script>alert('x')</script>\nSpeel eerlijk.",
     ])->assertSessionHas('success', 'De inhoud van de website is bijgewerkt.');
+});
 
-    expect(SiteContent::current()->rules_text)->toContain('<script>');
+it('escapes public website rules when rendering them', function () {
+    SiteContent::current()->update([
+        'hero_title' => 'Welkom in Westerdam',
+        'rules_text' => "<script>alert('x')</script>\nSpeel eerlijk.",
+    ]);
 
     $this->get('http://portaal.test/')
         ->assertOk()
