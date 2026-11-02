@@ -55,7 +55,7 @@ it('stores sessions in the tenant database and does not carry them to another te
     app('auth')->forgetGuards();
 
     $this->withUnencryptedCookie(config('session.cookie'), $cookie->getValue())
-        ->get($this->tenantUrl('beta', '/'))
+        ->get($this->tenantUrl('beta', '/dashboard'))
         ->assertRedirect($this->tenantUrl('beta', '/login'));
 });
 

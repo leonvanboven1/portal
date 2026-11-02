@@ -117,7 +117,7 @@ it('shows a roadmap and enforces its prerequisite, payment, duration, and compan
 
     $first->update(['is_active' => false]);
     expect(app(EducationService::class)->canCreateCompany($this->player))->toBeTrue();
-    $this->get(EDUCATION_BASE.'/')->assertOk()->assertSeeText('Mijn bedrijven');
+    $this->get(EDUCATION_BASE.'/dashboard')->assertOk()->assertSeeText('Mijn bedrijven');
 
     $this->get(EDUCATION_BASE.'/portal/companies/register')->assertOk();
     $this->get(EDUCATION_BASE.'/portal/companies')->assertOk()->assertSee('Nieuw Bedrijf');

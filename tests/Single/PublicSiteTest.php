@@ -9,12 +9,15 @@ use Illuminate\Support\Str;
 
 function siteUser(array $permissions = []): User
 {
+    $minecraftUsername = 'Speler'.Str::random(8);
+    $minecraftUuid = (string) Str::uuid();
+
     $user = User::create([
         'name' => 'Speler',
         'email' => Str::random(8).'@example.com',
-        'minecraft_username' => 'SpelerMC',
-        'minecraft_uuid' => 'aabbcc',
-        'minecraft_plain_uuid' => '00112233-4455-6677-8899-aabbccddeeff',
+        'minecraft_username' => $minecraftUsername,
+        'minecraft_uuid' => str_replace('-', '', $minecraftUuid),
+        'minecraft_plain_uuid' => $minecraftUuid,
         'password' => Hash::make('geheim123'),
         'token' => Str::random(32),
         'minecraft_verified' => true,
@@ -37,12 +40,14 @@ it('serves the public website to guests and logged-in users', function () {
         ->assertSee('Account maken')
         ->assertSee(route('login'));
 
-    $this->actingAs(siteUser())->get('http://portaal.test/')
+    $user = siteUser();
+
+    $this->actingAs($user)->get('http://portaal.test/')
         ->assertOk()
-        ->assertSee('SpelerMC')
+        ->assertSee($user->minecraft_username)
         ->assertSee('Naar het panel')
         ->assertSee('Uitloggen')
-        ->assertSee('mc-heads.net/avatar/SpelerMC/40');
+        ->assertSee('mc-heads.net/avatar/'.$user->minecraft_username.'/40');
 });
 
 it('lets only settings managers update public website content', function () {
