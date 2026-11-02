@@ -23,6 +23,7 @@ use App\Http\Controllers\Portal\Admin\DissolutionRequestManagementController;
 use App\Http\Controllers\Portal\CompanyRegistryController;
 use App\Http\Controllers\Portal\CriminalRecordController;
 use App\Http\Controllers\Portal\Police\PlayerDatabaseController;
+use App\Http\Controllers\Portal\Police\VogController;
 use App\Http\Controllers\Portal\BankAccountController;
 use App\Http\Controllers\Portal\PlotController;
 use App\Http\Controllers\Portal\PlotListingController;
@@ -270,6 +271,7 @@ Route::middleware('auth')->group(function () {
                 Route::get('/players', [PlayerDatabaseController::class, 'index'])->name('players.index');
                 Route::get('/players/{user}', [PlayerDatabaseController::class, 'show'])->name('players.show');
                 Route::post('/players/{user}/vog', [PlayerDatabaseController::class, 'issueVog'])->name('players.vog');
+                Route::get('/vogs', [VogController::class, 'index'])->name('vogs.index');
             });
 
             Route::prefix('bank-accounts')->name('bank-accounts.')->middleware(['feature:transactions', 'can:use-transactions'])->group(function () {

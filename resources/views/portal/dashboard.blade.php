@@ -6,6 +6,7 @@
 @section('content')
     @php
         $user = auth()->user();
+        $isOnline = $user->is_online;
         $canCreateCompany = $user->can('use-companies')
             && app(\App\Services\EducationService::class)->canCreateCompany($user);
         $stats = array_values(array_filter([
@@ -18,7 +19,7 @@
         $shortcuts = array_filter([
             $user->can('use-bank') ? ['label' => 'Bankrekeningen', 'detail' => 'Saldo en transacties', 'href' => route('portal.bank-accounts.index'), 'icon' => 'credit-card'] : null,
             $user->can('use-plots') ? ['label' => 'Mijn plots', 'detail' => 'Bekijk je kavels', 'href' => route('portal.plots.index'), 'icon' => 'map'] : null,
-            $user->can('use-broker') ? ['label' => 'Makelaar', 'detail' => 'Kopen en huren', 'href' => route('portal.plots.listings.index'), 'icon' => 'currency-dollar'] : null,
+            $user->can('use-broker') ? ['label' => 'Makelaar', 'detail' => 'Zoek tussen alle plots', 'href' => route('portal.plots.listings.index', ['soort' => 'alles']), 'icon' => 'currency-dollar'] : null,
             $user->can('request-permits') ? ['label' => 'Vergunningen', 'detail' => 'Aanvragen en status', 'href' => route('portal.permits.index'), 'icon' => 'document-check'] : null,
             $canCreateCompany ? ['label' => 'Bedrijven', 'detail' => 'Je ondernemingen', 'href' => route('portal.companies.index'), 'icon' => 'building-office'] : null,
             $user->can('use-education') ? ['label' => 'Opleidingen', 'detail' => 'Jouw leerroute', 'href' => route('portal.education.index'), 'icon' => 'academic-cap'] : null,
@@ -91,7 +92,7 @@
         </section>
 
         <aside class="omt-player-card" aria-label="Spelersprofiel">
-            <div class="omt-player-card-topline"><span>SPELERSPROFIEL</span><span class="omt-online-dot"></span></div>
+            <div class="omt-player-card-topline"><span>SPELERSPROFIEL</span><span @class(['omt-online-dot', 'is-online' => $isOnline, 'is-offline' => !$isOnline])></span></div>
             <div class="omt-player-card-identity">
                 <img src="https://mc-heads.net/avatar/{{ $user->minecraft_username }}/64" alt="" class="omt-pixel h-12 w-12 rounded-md">
                 <div class="min-w-0">
@@ -105,7 +106,7 @@
             </div>
             <div class="omt-player-card-footer">
                 <span>Gekoppeld account</span>
-                <span class="omt-account-state"><span></span> Actief</span>
+                <span @class(['omt-account-state', 'is-online' => $isOnline, 'is-offline' => !$isOnline])><span></span> {{ $isOnline ? 'Online' : 'Offline' }}</span>
             </div>
         </aside>
     </div>

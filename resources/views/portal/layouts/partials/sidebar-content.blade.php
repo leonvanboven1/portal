@@ -82,6 +82,7 @@
         <div class="{{ $heading }}">Politie</div>
         <ul role="list" class="space-y-0.5">
             <x-portal.nav-link :href="route('portal.police.players.index')" :active="request()->routeIs('portal.police.players.*')" icon="users">Spelersdatabase</x-portal.nav-link>
+            <x-portal.nav-link :href="route('portal.police.vogs.index')" :active="request()->routeIs('portal.police.vogs.*')" icon="document-check">VOG aanvragen</x-portal.nav-link>
         </ul>
     @endif
 

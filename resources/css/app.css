@@ -130,6 +130,7 @@
 .omt-player-card-topline, .omt-player-card-footer { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .omt-player-card-topline { color: #9bac9e; font-family: "JetBrains Mono", monospace; font-size: 9px; }
 .omt-online-dot, .omt-account-state span { width: 7px; height: 7px; flex: none; border-radius: 50%; background: #a6d467; box-shadow: 0 0 0 3px rgb(166 212 103 / 13%); }
+.omt-online-dot.is-offline, .omt-account-state.is-offline span { background: #9aa79c; box-shadow: 0 0 0 3px rgb(154 167 156 / 13%); }
 .omt-player-card-identity { display: flex; align-items: center; gap: 12px; margin-top: 20px; }
 .omt-player-card-identity img { border: 1px solid rgb(255 255 255 / 15%); background: var(--omt-rail-soft); }
 .omt-player-name { color: #fff; font-size: 14px; font-weight: 650; }
@@ -209,15 +210,17 @@
 .omt-learning-notice { display: flex; align-items: flex-start; gap: 10px; border: 1px solid #d9dfe0; border-radius: 7px; padding: 12px 14px; background: #e9eff0; color: #3f6672; font-size: 10px; line-height: 1.5; }
 .dark .omt-learning-notice { border-color: #35474d; background: #253339; color: #bad3da; }
 .omt-learning-notice svg { flex: none; }
-.omt-learning-steps { padding: 7px 20px 20px; }
+.omt-learning-steps { padding: 7px 20px 20px; background-image: radial-gradient(color-mix(in srgb, var(--omt-line) 48%, transparent) .8px, transparent .8px); background-size: 18px 18px; }
 .omt-learning-step { position: relative; display: grid; grid-template-columns: 38px minmax(0, 1fr); gap: 13px; padding: 13px 0; }
-.omt-learning-step:not(:last-child)::after { position: absolute; top: 49px; bottom: -14px; left: 18px; width: 1px; background: var(--omt-line); content: ""; }
-.omt-learning-step-marker { z-index: 1; display: grid; width: 38px; height: 38px; place-items: center; border: 1px solid var(--omt-line); border-radius: 50%; background: var(--omt-surface); color: var(--omt-muted); font-family: "JetBrains Mono", monospace; font-size: 9px; }
+.omt-learning-step:not(:last-child)::after { position: absolute; top: 49px; bottom: -14px; left: 18px; width: 2px; background: linear-gradient(var(--omt-copper), var(--omt-line)); content: ""; }
+.omt-learning-step-marker { z-index: 1; display: grid; width: 38px; height: 38px; place-items: center; border: 1px solid var(--omt-line); border-radius: 50%; background: var(--omt-surface); color: var(--omt-muted); font-family: "JetBrains Mono", monospace; font-size: 9px; box-shadow: 0 0 0 4px var(--omt-surface); }
 .state-available .omt-learning-step-marker, .state-in_progress .omt-learning-step-marker { border-color: rgb(var(--accent-300)); background: rgb(var(--accent-50)); color: rgb(var(--accent-700)); }
 .state-completed .omt-learning-step-marker { border-color: #8eaa96; background: #e7efe8; color: #3c704d; }
 .dark .state-available .omt-learning-step-marker, .dark .state-in_progress .omt-learning-step-marker { background: #422f28; color: #efb69b; }
 .dark .state-completed .omt-learning-step-marker { background: #27392c; color: #acd3b2; }
-.omt-learning-step-card { min-width: 0; border: 1px solid var(--omt-line); border-radius: 7px; padding: 14px; background: var(--omt-surface-raised); }
+.omt-learning-step-card { position: relative; min-width: 0; border: 1px solid var(--omt-line); border-radius: 9px; padding: 14px; background: var(--omt-surface-raised); box-shadow: 0 3px 12px rgb(28 38 31 / 4%); transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease; }
+.omt-learning-step-card::before { position: absolute; top: 18px; left: -14px; width: 13px; height: 1px; background: var(--omt-copper); content: ""; }
+.omt-learning-step-card:hover { transform: translateX(2px); border-color: color-mix(in srgb, var(--omt-copper) 40%, var(--omt-line)); box-shadow: 0 7px 18px rgb(28 38 31 / 8%); }
 .omt-learning-step-topline { display: flex; align-items: center; justify-content: space-between; gap: 10px; color: var(--omt-muted); font-family: "JetBrains Mono", monospace; font-size: 8px; }
 .omt-learning-state { border-radius: 4px; padding: 3px 6px; background: var(--omt-page); font-family: "Schibsted Grotesk", sans-serif; font-size: 9px; }
 .state-available .omt-learning-state { background: #f5e8e1; color: #92553d; }
@@ -300,6 +303,7 @@
     .omt-learning-step { grid-template-columns: 31px minmax(0, 1fr); gap: 9px; }
     .omt-learning-step-marker { width: 31px; height: 31px; }
     .omt-learning-step:not(:last-child)::after { top: 43px; left: 15px; }
+    .omt-learning-step-card::before { top: 15px; left: -10px; width: 9px; }
     .omt-education-form-section { padding: 16px; }
     .omt-prerequisite-grid { grid-template-columns: minmax(0, 1fr); }
     .omt-plot-admin-hero { align-items: stretch; flex-direction: column; gap: 18px; padding: 19px; }

@@ -27,8 +27,14 @@ class VogPlugin extends FakePluginApiService
 
     public bool $automatic = true;
 
+    public ?array $criminalRecords = null;
+
     public function get(string $endpoint, array $query = []): mixed
     {
+        if (str_ends_with($endpoint, '/criminalrecords') && $this->criminalRecords !== null) {
+            return ['success' => true, 'criminalrecords' => $this->criminalRecords];
+        }
+
         if (str_ends_with($endpoint, '/vogs') && ! $this->knowsVogs) {
             return null;
         }
@@ -87,7 +93,53 @@ it('asks the plugin to issue the VOG for the agent', function () {
         ->assertSessionHas('success', 'VOG voor Daan is negatief. Het boek staat in je inventory.');
 
     expect($this->plugin->posts)->toBe([
-        ['/api/player/'.DemoWorld::PLAYERS['Daan'].'/vogs', ['officer' => DemoWorld::PLAYERS['Agent_Sanne']]],
+        ['/api/player/'.DemoWorld::PLAYERS['Daan'].'/vogs', [
+            'officer' => DemoWorld::PLAYERS['Agent_Sanne'],
+            'positive' => false,
+            'record_count' => 2,
+        ]],
+    ]);
+});
+
+it('ignores violations older than one month when deciding the VOG', function () {
+    $this->plugin->criminalRecords = [
+        ['id' => 1, 'reason' => 'Oude overtreding', 'officer' => DemoWorld::PLAYERS['Agent_Sanne'], 'date' => now()->subDays(31)->getTimestampMs()],
+        ['id' => 2, 'reason' => 'Recente overtreding', 'officer' => DemoWorld::PLAYERS['Agent_Sanne'], 'date' => now()->subDays(3)->getTimestampMs()],
+    ];
+    $this->plugin->answer = [
+        'success' => true,
+        'vog' => [
+            'id' => 1,
+            'positive' => true,
+            'record_count' => 0,
+            'officer' => DemoWorld::PLAYERS['Agent_Sanne'],
+            'date' => now()->getTimestampMs(),
+            'valid_until' => now()->addWeek()->getTimestampMs(),
+        ],
+    ];
+
+    $this->actingAs($this->agent)
+        ->post(VOG_BASE.'/portal/police/players/'.$this->daan->id.'/vog')
+        ->assertSessionHas('success', 'VOG voor Daan is negatief. Het boek staat in je inventory.');
+
+    expect($this->plugin->posts[0][1])->toMatchArray([
+        'positive' => false,
+        'record_count' => 1,
+    ]);
+});
+
+it('issues a positive VOG when every violation is older than one month', function () {
+    $this->plugin->criminalRecords = [
+        ['id' => 1, 'reason' => 'Oude overtreding', 'officer' => DemoWorld::PLAYERS['Agent_Sanne'], 'date' => now()->subDays(31)->getTimestampMs()],
+    ];
+
+    $this->actingAs($this->agent)
+        ->post(VOG_BASE.'/portal/police/players/'.$this->daan->id.'/vog')
+        ->assertSessionHas('success', 'VOG voor Daan is positief. Het boek staat in je inventory.');
+
+    expect($this->plugin->posts[0][1])->toMatchArray([
+        'positive' => true,
+        'record_count' => 0,
     ]);
 });
 
@@ -105,6 +157,16 @@ it('lets only agents issue a VOG', function () {
         ->assertForbidden();
 
     expect($this->plugin->posts)->toBe([]);
+});
+
+it('shows the VOG tab only to police agents', function () {
+    $this->actingAs($this->agent)->get(VOG_BASE.'/portal/police/vogs?player='.$this->daan->id)
+        ->assertOk()
+        ->assertSee("VOG's aanvragen")
+        ->assertSee('Verwachte uitslag');
+
+    $this->actingAs($this->lotte)->get(VOG_BASE.'/portal/police/vogs')
+        ->assertForbidden();
 });
 
 it('shows the plugin VOGs to the agent and to the player', function () {

@@ -64,7 +64,7 @@ class PlayerDatabaseController extends Controller
         ]);
     }
 
-    /** The plugin issues the VOG and gives the agent the book in-game. */
+    /** The portal decides from violations in the last month; the plugin issues the book. */
     public function issueVog(User $user, VogService $vogs)
     {
         $officer = auth()->user();
@@ -73,7 +73,8 @@ class PlayerDatabaseController extends Controller
             return back()->with('error', ['title' => 'Geen VOG afgegeven', 'message' => 'Een Minecraft-account ontbreekt.']);
         }
 
-        $result = $vogs->issue($user->minecraft_plain_uuid, $officer->minecraft_plain_uuid);
+        $recordCount = count($vogs->recentRecords($user->criminal_records));
+        $result = $vogs->issue($user->minecraft_plain_uuid, $officer->minecraft_plain_uuid, $recordCount);
 
         if (isset($result['error'])) {
             return back()->with('error', ['title' => 'Geen VOG afgegeven', 'message' => $result['error']]);

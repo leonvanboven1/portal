@@ -41,9 +41,12 @@ class FakePluginApiService extends PluginApiService
     public function postOrError(string $endpoint, array $data = []): ?array
     {
         if (preg_match('#^api/player/([^/]+)/vogs$#', trim($endpoint, '/'), $m)) {
-            $records = count($this->records(DemoWorld::nameFor($m[1])));
+            $records = $data['record_count'] ?? count($this->records(DemoWorld::nameFor($m[1])));
 
-            return ['success' => true, 'vog' => $this->vog($records, $data['officer'] ?? DemoWorld::PLAYERS['Agent_Sanne'], now())];
+            $vog = $this->vog($records, $data['officer'] ?? DemoWorld::PLAYERS['Agent_Sanne'], now());
+            $vog['positive'] = $data['positive'] ?? $vog['positive'];
+
+            return ['success' => true, 'vog' => $vog];
         }
 
         return ['success' => true];

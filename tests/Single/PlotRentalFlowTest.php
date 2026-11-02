@@ -101,6 +101,49 @@ it('lets an owner offer a plot for rent and a player rent it', function () {
     $this->get(BASE.'/plots/te-koop?soort=huur')->assertDontSee('/plots/te-huur/'.$offer->id.'/huren');
 });
 
+it('searches and paginates ten mixed sale and rental listings', function () {
+    $marketplaceDate = now()->startOfSecond();
+
+    foreach (range(0, 5) as $index) {
+        $listing = PlotListing::create([
+            'plot_name' => "koop_plot_{$index}",
+            'seller_id' => $this->owner->id,
+            'payout_bank_account_uuid' => 'acc-owner',
+            'price' => 5000,
+            'description' => 'Te koop',
+            'min_x' => 0,
+            'min_y' => 0,
+            'min_z' => 0,
+            'max_x' => 9,
+            'max_y' => 9,
+            'max_z' => 9,
+            'instant_buy' => true,
+            'status' => 'active',
+        ]);
+        $listing->forceFill(['created_at' => $marketplaceDate])->save();
+
+        $offer = offerKade($this->owner, ['plot_name' => "huur_plot_{$index}"]);
+        $offer->forceFill(['created_at' => $marketplaceDate])->save();
+    }
+
+    $this->actingAs($this->renter)
+        ->get(BASE.'/plots/te-koop?soort=alles')
+        ->assertOk()
+        ->assertSee('Alles')
+        ->assertSee('Te koop')
+        ->assertSee('Te huur')
+        ->assertSee('page=2');
+
+    $this->get(BASE.'/plots/te-koop?soort=alles&page=2')
+        ->assertOk()
+        ->assertSee('koop_plot_0');
+
+    $this->get(BASE.'/plots/te-koop?soort=alles&search=huur_plot_3')
+        ->assertOk()
+        ->assertSee('huur_plot_3')
+        ->assertDontSee('koop_plot_0');
+});
+
 it('lets an owner rent out a plot without a description', function () {
     $this->actingAs($this->owner)->post(BASE.'/plots/kade_1/verhuren', [
         'price' => 150,

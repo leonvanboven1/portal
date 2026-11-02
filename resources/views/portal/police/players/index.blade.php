@@ -5,6 +5,7 @@
 
 @section('content')
     <div class="space-y-6">
+        @include('portal.police.partials.tabs', ['active' => 'players'])
         <!-- Search & Filters -->
         <div class="bg-white dark:bg-gray-800 shadow-sm rounded-lg">
             <div class="p-6">

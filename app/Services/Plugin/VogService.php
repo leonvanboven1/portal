@@ -6,10 +6,8 @@ use App\Helpers\MinecraftHelper;
 use Carbon\Carbon;
 
 /**
- * VOGs (verklaringen omtrent gedrag) live in the plugin: it decides the outcome from the
- * strafblad and gives the officer the VOG book in-game. The portal shows them and asks
- * the plugin to issue one, unless the server fills in VOGs by hand (automatic: false in
- * books.yml). Plugins from before VOGs answer neither call.
+ * The portal decides each VOG from the player's recent criminal records. The plugin
+ * stores the issued VOG and gives the officer the book in-game.
  */
 class VogService
 {
@@ -25,8 +23,8 @@ class VogService
     public function __construct(protected PluginApiService $apiService) {}
 
     /**
-     * The player's VOGs, newest first, and whether the portal may issue one; null when the
-     * plugin gave no answer.
+     * The player's VOGs, newest first, and whether the plugin is configured to issue one;
+     * null when the plugin gave no answer.
      *
      * @return array{automatic: bool, vogs: list<array{positive: bool, record_count: int, officer_name: ?string, date: Carbon, valid_until: Carbon, valid: bool}>}|null
      */
@@ -44,17 +42,53 @@ class VogService
         ];
     }
 
+    /** @param list<array<string, mixed>> $records
+     *  @return list<array<string, mixed>>
+     */
+    public function recentRecords(array $records): array
+    {
+        $cutoff = now()->subMonth();
+
+        return array_values(array_filter(
+            $records,
+            fn (array $record) => $this->recordDate($record)->greaterThanOrEqualTo($cutoff),
+        ));
+    }
+
+    public function recordDate(array $record): Carbon
+    {
+        $date = $record['date'] ?? throw new \UnexpectedValueException('A criminal record is missing its date.');
+
+        if (is_numeric($date)) {
+            $timestamp = (int) $date;
+
+            return abs($timestamp) >= 100_000_000_000
+                ? Carbon::createFromTimestampMs($timestamp)
+                : Carbon::createFromTimestamp($timestamp);
+        }
+
+        return Carbon::parse($date);
+    }
+
     /**
-     * Asks the plugin to issue a VOG by this officer.
+     * Asks the plugin to issue the VOG with the outcome already decided by the portal.
      *
      * @return array{vog: array}|array{error: string}
      */
-    public function issue(string $playerUuid, string $officerUuid): array
+    public function issue(string $playerUuid, string $officerUuid, int $recordCount): array
     {
-        $data = $this->apiService->postOrError("/api/player/{$playerUuid}/vogs", ['officer' => $officerUuid]);
+        $positive = $recordCount === 0;
+        $data = $this->apiService->postOrError("/api/player/{$playerUuid}/vogs", [
+            'officer' => $officerUuid,
+            'positive' => $positive,
+            'record_count' => $recordCount,
+        ]);
 
         if (($data['success'] ?? false) && isset($data['vog'])) {
-            return ['vog' => $this->present($data['vog'])];
+            return ['vog' => $this->present(array_merge($data['vog'], [
+                'positive' => $positive,
+                'record_count' => $recordCount,
+            ]))];
         }
 
         return ['error' => self::ERRORS[$data['code'] ?? null] ?? 'De plugin gaf geen VOG af. Is hij bereikbaar en bijgewerkt?'];

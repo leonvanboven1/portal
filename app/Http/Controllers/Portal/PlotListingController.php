@@ -12,6 +12,7 @@ use App\Notifications\PlotTransactionNotification;
 use App\Models\PlotRentalOffer;
 use App\Services\PlotRentalService;
 use App\Support\Portal;
+use Illuminate\Support\Facades\DB;
 
 class PlotListingController extends Controller
 {
@@ -31,15 +32,74 @@ class PlotListingController extends Controller
 
     public function index()
     {
-        $listings = PlotListing::with('seller')
+        $validated = request()->validate([
+            'soort' => ['nullable', 'in:koop,huur,alles'],
+            'search' => ['nullable', 'string', 'max:100'],
+        ]);
+        $tab = $validated['soort'] ?? 'koop';
+        $search = trim($validated['search'] ?? '');
+        $listingsQuery = fn () => PlotListing::with('seller')
             ->where('status', 'active')
-            ->latest()
-            ->get();
+            ->when($search !== '', fn ($query) => $query->where('plot_name', 'like', "%{$search}%"));
+        $rentalOffersQuery = fn () => PlotRentalOffer::with('landlord')
+            ->where('status', 'active')
+            ->when($search !== '', fn ($query) => $query->where('plot_name', 'like', "%{$search}%"));
+
+        $listingCount = $listingsQuery()->count();
+        $rentalOfferCount = $rentalOffersQuery()->count();
+        $marketplaceListings = null;
+        $listings = collect();
+        $rentalOffers = collect();
+
+        if ($tab === 'alles') {
+            $sales = PlotListing::query()
+                ->selectRaw("'koop' as listing_type, id, created_at")
+                ->where('status', 'active')
+                ->when($search !== '', fn ($query) => $query->where('plot_name', 'like', "%{$search}%"));
+            $rentals = PlotRentalOffer::query()
+                ->selectRaw("'huur' as listing_type, id, created_at")
+                ->where('status', 'active')
+                ->when($search !== '', fn ($query) => $query->where('plot_name', 'like', "%{$search}%"));
+
+            $marketplaceListings = DB::query()
+                ->fromSub($sales->unionAll($rentals), 'marketplace')
+                ->orderByDesc('created_at')
+                ->orderBy('listing_type')
+                ->orderByDesc('id')
+                ->paginate(10)
+                ->withQueryString();
+
+            $entries = $marketplaceListings->getCollection();
+            $saleModels = PlotListing::with('seller')
+                ->whereIn('id', $entries->where('listing_type', 'koop')->pluck('id'))
+                ->get()
+                ->keyBy('id');
+            $rentalModels = PlotRentalOffer::with('landlord')
+                ->whereIn('id', $entries->where('listing_type', 'huur')->pluck('id'))
+                ->get()
+                ->keyBy('id');
+
+            $marketplaceListings->setCollection($entries->map(function ($entry) use ($saleModels, $rentalModels) {
+                $entry->listing = $entry->listing_type === 'koop'
+                    ? $saleModels->get($entry->id)
+                    : $rentalModels->get($entry->id);
+
+                return $entry;
+            }));
+        } elseif ($tab === 'huur') {
+            $rentalOffers = $rentalOffersQuery()->latest()->paginate(10)->withQueryString();
+        } else {
+            $listings = $listingsQuery()->latest()->paginate(10)->withQueryString();
+        }
 
         return view('portal.plots.listings.index', [
-            'tab' => request('soort') === 'huur' ? 'huur' : 'koop',
+            'tab' => $tab,
+            'search' => $search,
+            'listingCount' => $listingCount,
+            'rentalOfferCount' => $rentalOfferCount,
             'listings' => $listings,
-            'rentalOffers' => PlotRentalOffer::with('landlord')->where('status', 'active')->latest()->get(),
+            'rentalOffers' => $rentalOffers,
+            'marketplaceListings' => $marketplaceListings,
         ]);
     }
 

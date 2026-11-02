@@ -6,7 +6,7 @@
     },
     "exported_at": "2026-10-09T00:00:00+00:00",
     "name": "OpenMinetopia Portal",
-    "author": "beheer@openminetopia.nl",
+    "author": "leon@vunex.nl",
     "description": "Het webportaal voor een Minecraft-server met de OpenMinetopia-plugin: bank, plots, makelaar, bedrijven, vergunningen en politie. Maak eerst een database aan op het tabblad Databases en vul die gegevens in bij Startup. Bij de eerste start toont de console de regels voor de config.yml van de plugin en een link om beheerder te worden. Het portaal luistert met HTTP op de poort van deze server; zet er voor HTTPS een reverse proxy of Cloudflare voor.",
     "features": null,
     "docker_images": {
