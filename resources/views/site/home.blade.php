@@ -5,14 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#f5f4ef">
     <meta name="description" content="{{ $content->hero_text }}">
-    <title>{{ config('app.name') }} — {{ $content->hero_title }}</title>
+    <title>Vunex — {{ $content->hero_title }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="site-page">
     <header class="site-header">
-        <a href="{{ route('site.home') }}" class="site-brand" aria-label="{{ config('app.name') }} — home">
+        <a href="{{ route('site.home') }}" class="site-brand" aria-label="Vunex — home">
             <span class="site-brand-mark"><img src="{{ asset('images/brand/logo.svg') }}" alt=""></span>
-            <span>{{ config('app.name') }}<small>MINECRAFT ROLEPLAY</small></span>
+            <span>Vunex<small>MINECRAFT ROLEPLAY</small></span>
         </a>
 
         <nav class="site-nav" aria-label="Hoofdnavigatie">
@@ -137,7 +137,7 @@
                     <p class="site-rules-description">Neem even de tijd om onze regels door te lezen. Zo weet iedereen waar die aan toe is.</p>
                 </div>
                 <div class="site-rules-card">
-                    <div class="site-rules-card-header"><span>STADSAFSPRAKEN</span><span>{{ config('app.name') }}</span></div>
+                    <div class="site-rules-card-header"><span>STADSAFSPRAKEN</span><span>Vunex</span></div>
                     <div class="site-rules-copy">{{ $content->rules_text }}</div>
                     <div class="site-rules-card-footer"><x-heroicon-o-heart class="h-4 w-4"/> Respect voor elkaar staat altijd op één.</div>
                 </div>
@@ -158,7 +158,7 @@
     <footer class="site-footer">
         <a href="{{ route('site.home') }}" class="site-brand site-brand-footer">
             <span class="site-brand-mark"><img src="{{ asset('images/brand/logo.svg') }}" alt=""></span>
-            <span>{{ config('app.name') }}<small>MINECRAFT ROLEPLAY</small></span>
+            <span>Vunex<small>MINECRAFT ROLEPLAY</small></span>
         </a>
         <span>Een wereld gebouwd op verhalen, gemaakt door spelers.</span>
         <a href="#regels">Lees de regels <x-heroicon-o-arrow-up-right class="h-3.5 w-3.5"/></a>

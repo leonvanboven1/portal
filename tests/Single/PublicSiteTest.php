@@ -35,6 +35,7 @@ function siteUser(array $permissions = []): User
 it('serves the public website to guests and logged-in users', function () {
     $this->get('http://portaal.test/')
         ->assertOk()
+        ->assertSee('Vunex')
         ->assertSee('Jouw verhaal begint hier.')
         ->assertSee('Samen houden we de stad leuk.')
         ->assertSee('Account maken')
@@ -80,14 +81,19 @@ it('lets only settings managers update public website content', function () {
 });
 
 it('escapes public website rules when rendering them', function () {
-    SiteContent::current()->update([
-        'hero_title' => 'Welkom in Westerdam',
-        'rules_text' => "<script>alert('x')</script>\nSpeel eerlijk.",
-    ]);
+    $html = view('site.home', [
+        'content' => new SiteContent([
+            'hero_title' => 'Welkom in Westerdam',
+            'hero_text' => 'Een verhaal voor iedereen.',
+            'about_title' => 'Over onze stad',
+            'about_text' => 'Bouw mee aan de stad.',
+            'rules_title' => 'Onze afspraken',
+            'rules_text' => "<script>alert('x')</script>\nSpeel eerlijk.",
+        ]),
+    ])->render();
 
-    $this->get('http://portaal.test/')
-        ->assertOk()
-        ->assertSee('Welkom in Westerdam')
-        ->assertSee('&lt;script&gt;alert(&#039;x&#039;)&lt;/script&gt;', false)
-        ->assertDontSee("<script>alert('x')</script>", false);
+    expect($html)
+        ->toContain('Welkom in Westerdam')
+        ->toContain('&lt;script&gt;alert(&#039;x&#039;)&lt;/script&gt;')
+        ->not->toContain("<script>alert('x')</script>");
 });
