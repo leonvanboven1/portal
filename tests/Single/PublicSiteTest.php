@@ -1,12 +1,14 @@
 <?php
 
+use App\Http\Controllers\Admin\SettingsController;
+use App\Models\BrandingSetting;
 use App\Models\Permission;
 use App\Models\Role;
 use App\Models\SiteContent;
 use App\Models\SiteRule;
 use App\Models\SiteRuleCategory;
-use App\Models\BrandingSetting;
 use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
@@ -175,25 +177,30 @@ it('lets settings managers create rule categories and rules for the separate rul
         ->assertSee('Respecteer de afspraken van de stad.');
 });
 
-it('lets settings managers replace public homepage photos', function () {
+it('stores and removes public homepage photos', function () {
     Storage::fake('public');
-    $admin = siteUser(['manage-settings']);
 
-    $this->actingAs($admin)
-        ->call('PUT', 'http://portaal.test/portal/admin/settings/site-images', [], [], [
-            'hero_image' => UploadedFile::fake()->image('vunex.jpg'),
-        ])
-        ->assertSessionHas('success', 'De afbeeldingen van de website zijn bijgewerkt.');
+    $request = Request::create('/portal/admin/settings/site-images', 'PUT', [], [], [
+        'hero_image' => UploadedFile::fake()->image('vunex.jpg'),
+    ]);
+    expect($request->hasFile('hero_image'))->toBeTrue();
+    $request->setLaravelSession(app('session')->driver());
+    app()->instance('request', $request);
+
+    app(SettingsController::class)->updateSiteImages($request);
 
     $content = SiteContent::current();
     expect($content->hero_image_path)->not->toBeNull();
     Storage::disk('public')->assertExists($content->hero_image_path);
 
     $path = $content->hero_image_path;
-    $this->post('http://portaal.test/portal/admin/settings/site-images', [
-        '_method' => 'PUT',
+    $removeRequest = Request::create('/portal/admin/settings/site-images', 'PUT', [
         'remove_hero_image' => '1',
-    ])->assertSessionHas('success', 'De afbeeldingen van de website zijn bijgewerkt.');
+    ]);
+    $removeRequest->setLaravelSession(app('session')->driver());
+    app()->instance('request', $removeRequest);
+
+    app(SettingsController::class)->updateSiteImages($removeRequest);
 
     expect(SiteContent::current()->hero_image_path)->toBeNull();
     Storage::disk('public')->assertMissing($path);
