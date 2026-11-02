@@ -8,8 +8,12 @@ use App\Models\PermitSetting;
 use App\Models\CompanySetting;
 use App\Models\PlotListingSetting;
 use App\Models\SiteContent;
+use App\Models\SiteRule;
+use App\Models\SiteRuleCategory;
 use App\Support\Features;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use RuntimeException;
 
 class SettingsController extends Controller
 {
@@ -24,6 +28,7 @@ class SettingsController extends Controller
                 'max_image_size_mb' => PlotListingSetting::DEFAULT_MAX_IMAGE_SIZE_MB,
             ]),
             'siteContent' => SiteContent::current(),
+            'siteRuleCategories' => SiteRuleCategory::with('rules')->orderBy('sort_order')->orderBy('id')->get(),
         ]);
     }
 
@@ -34,13 +39,104 @@ class SettingsController extends Controller
             'hero_text' => ['required', 'string', 'max:2000'],
             'about_title' => ['required', 'string', 'max:120'],
             'about_text' => ['required', 'string', 'max:5000'],
-            'rules_title' => ['required', 'string', 'max:120'],
-            'rules_text' => ['required', 'string', 'max:10000'],
         ]);
 
         SiteContent::current()->update($validated);
 
         return back()->with('success', 'De inhoud van de website is bijgewerkt.');
+    }
+
+    public function updateSiteImages(Request $request)
+    {
+        $request->validate([
+            'hero_image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:10240'],
+            'unique_image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:10240'],
+            'steps_image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:10240'],
+            'remove_hero_image' => ['nullable', 'boolean'],
+            'remove_unique_image' => ['nullable', 'boolean'],
+            'remove_steps_image' => ['nullable', 'boolean'],
+        ]);
+
+        $content = SiteContent::current();
+        $replacedPaths = [];
+
+        foreach ([
+            'hero_image' => 'hero_image_path',
+            'unique_image' => 'unique_image_path',
+            'steps_image' => 'steps_image_path',
+        ] as $input => $column) {
+            $remove = $request->boolean('remove_'.$input);
+            if (! $request->hasFile($input) && ! $remove) {
+                continue;
+            }
+
+            $replacedPaths[] = $content->{$column};
+            $content->{$column} = null;
+
+            if ($request->hasFile($input)) {
+                $path = $request->file($input)->store('site', 'public');
+                if (! $path) {
+                    throw new RuntimeException("Het opslaan van de afbeelding {$input} is mislukt.");
+                }
+                $content->{$column} = $path;
+            }
+        }
+
+        $content->save();
+
+        foreach (array_filter($replacedPaths) as $path) {
+            if (! Storage::disk('public')->delete($path) && Storage::disk('public')->exists($path)) {
+                throw new RuntimeException("Het verwijderen van de oude website-afbeelding {$path} is mislukt.");
+            }
+        }
+
+        return back()->with('success', 'De afbeeldingen van de website zijn bijgewerkt.');
+    }
+
+    public function storeSiteRuleCategory(Request $request)
+    {
+        $validated = $request->validate(['name' => ['required', 'string', 'max:100']]);
+        $validated['sort_order'] = (int) SiteRuleCategory::max('sort_order') + 1;
+        SiteRuleCategory::create($validated);
+
+        return back()->with('success', 'De regelcategorie is toegevoegd.');
+    }
+
+    public function destroySiteRuleCategory(SiteRuleCategory $category)
+    {
+        $category->delete();
+
+        return back()->with('success', 'De regelcategorie en bijbehorende regels zijn verwijderd.');
+    }
+
+    public function storeSiteRule(Request $request, SiteRuleCategory $category)
+    {
+        $validated = $request->validate([
+            'title' => ['required', 'string', 'max:160'],
+            'body' => ['required', 'string', 'max:5000'],
+        ]);
+        $validated['sort_order'] = (int) $category->rules()->max('sort_order') + 1;
+        $category->rules()->create($validated);
+
+        return back()->with('success', 'De regel is toegevoegd.');
+    }
+
+    public function updateSiteRule(Request $request, SiteRule $siteRule)
+    {
+        $validated = $request->validate([
+            'title' => ['required', 'string', 'max:160'],
+            'body' => ['required', 'string', 'max:5000'],
+        ]);
+        $siteRule->update($validated);
+
+        return back()->with('success', 'De regel is bijgewerkt.');
+    }
+
+    public function destroySiteRule(SiteRule $siteRule)
+    {
+        $siteRule->delete();
+
+        return back()->with('success', 'De regel is verwijderd.');
     }
 
     public function updateFeatures(Request $request)

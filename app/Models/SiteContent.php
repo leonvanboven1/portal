@@ -13,6 +13,9 @@ class SiteContent extends Model
         'about_text',
         'rules_title',
         'rules_text',
+        'hero_image_path',
+        'unique_image_path',
+        'steps_image_path',
     ];
 
     public static function current(): self

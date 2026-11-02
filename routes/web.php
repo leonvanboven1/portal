@@ -40,6 +40,7 @@ use App\Http\Controllers\SiteController;
 
 Route::get('branding/logo', [BrandingController::class, 'logo'])->name('branding.logo');
 Route::get('/', [SiteController::class, 'index'])->name('site.home');
+Route::get('/regels', [SiteController::class, 'rules'])->name('site.rules');
 
 Route::middleware('guest')->group(function () {
     Route::get('register', [RegisterController::class, 'create'])->name('register');
@@ -166,6 +167,12 @@ Route::middleware('auth')->group(function () {
                     Route::get('settings', [SettingsController::class, 'index'])->name('settings.index');
                     Route::put('settings/features', [SettingsController::class, 'updateFeatures'])->name('settings.update-features');
                     Route::put('settings/site-content', [SettingsController::class, 'updateSiteContent'])->name('settings.update-site-content');
+                    Route::put('settings/site-images', [SettingsController::class, 'updateSiteImages'])->name('settings.update-site-images');
+                    Route::post('settings/site-rules/categories', [SettingsController::class, 'storeSiteRuleCategory'])->name('settings.site-rules.categories.store');
+                    Route::delete('settings/site-rules/categories/{category}', [SettingsController::class, 'destroySiteRuleCategory'])->name('settings.site-rules.categories.destroy');
+                    Route::post('settings/site-rules/categories/{category}/rules', [SettingsController::class, 'storeSiteRule'])->name('settings.site-rules.store');
+                    Route::put('settings/site-rules/{siteRule}', [SettingsController::class, 'updateSiteRule'])->name('settings.site-rules.update');
+                    Route::delete('settings/site-rules/{siteRule}', [SettingsController::class, 'destroySiteRule'])->name('settings.site-rules.destroy');
                     Route::put('settings/plot-listing-settings', [SettingsController::class, 'updatePlotListingSettings'])
                         ->middleware('feature:broker')
                         ->name('settings.update-plot-listing-settings');

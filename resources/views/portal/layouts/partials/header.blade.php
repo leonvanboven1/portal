@@ -27,6 +27,11 @@
             @endif
         </div>
 
+        <a href="{{ route('site.home') }}" class="omt-website-link" aria-label="Terug naar de Vunex-website" title="Terug naar de Vunex-website">
+            <x-heroicon-o-arrow-left class="h-4 w-4"/>
+            <span>Website</span>
+        </a>
+
         @php($unread = auth()->user()->unreadNotifications->count())
         <div class="relative" x-data="{ open: false }">
             <button @click="open = !open" class="omt-icon-button relative rounded-md p-2"

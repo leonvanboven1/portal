@@ -21,7 +21,7 @@
                     </span>
                     <div>
                         <h2 class="text-base font-semibold text-gray-900 dark:text-white">Openbare website</h2>
-                        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Pas de introductie, informatie en regels aan die bezoekers op de startpagina zien.</p>
+                        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Beheer de homepage, afbeeldingen en spelregels van Vunex.</p>
                     </div>
                 </div>
             </div>
@@ -33,17 +33,15 @@
                     'hero_text' => ['Introductie', 'Korte tekst die bezoekers als eerste lezen.'],
                     'about_title' => ['Titel over ons', 'De titel boven de informatie over de stad.'],
                     'about_text' => ['Informatie over de stad', 'Vertel bezoekers wat jouw roleplayserver bijzonder maakt.'],
-                    'rules_title' => ['Titel van de regels', 'Bijvoorbeeld: Samen houden we de stad leuk.'],
-                    'rules_text' => ['Onze regels', 'Zet iedere regel op een eigen regel. De tekst wordt veilig als platte tekst getoond.'],
                 ] as $field => [$label, $hint])
                     <div>
                         <label for="{{ $field }}" class="block text-sm font-medium text-gray-900 dark:text-white">{{ $label }}</label>
-                        @if(in_array($field, ['hero_title', 'about_title', 'rules_title'], true))
+                        @if(in_array($field, ['hero_title', 'about_title'], true))
                             <input id="{{ $field }}" name="{{ $field }}" type="text" maxlength="120" required
                                    value="{{ old($field, $siteContent->{$field}) }}"
                                    class="mt-1.5 block w-full rounded-md border-0 bg-white px-3 py-2.5 text-sm text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 dark:bg-gray-700 dark:text-white dark:ring-gray-600 dark:focus:ring-indigo-500">
                         @else
-                            <textarea id="{{ $field }}" name="{{ $field }}" rows="{{ $field === 'rules_text' ? 8 : 4 }}" required
+                            <textarea id="{{ $field }}" name="{{ $field }}" rows="4" required
                                       class="mt-1.5 block w-full rounded-md border-0 bg-white px-3 py-2.5 text-sm text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 dark:bg-gray-700 dark:text-white dark:ring-gray-600 dark:focus:ring-indigo-500">{{ old($field, $siteContent->{$field}) }}</textarea>
                         @endif
                         <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">{{ $hint }}</p>
@@ -57,6 +55,108 @@
                     </button>
                 </div>
             </form>
+        </section>
+
+        <section class="overflow-hidden rounded-lg bg-white shadow-sm dark:bg-gray-800">
+            <div class="border-b border-gray-200 px-4 py-5 dark:border-gray-700 sm:px-6">
+                <h2 class="text-base font-semibold text-gray-900 dark:text-white">Afbeeldingen openbare website</h2>
+                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Pas alle afbeeldingen van de openbare website aan. JPG, PNG of WebP tot 10 MB.</p>
+            </div>
+            <form action="{{ route('portal.admin.settings.update-site-images') }}" method="POST" enctype="multipart/form-data" class="grid gap-6 p-4 sm:grid-cols-2 sm:p-6 lg:grid-cols-4">
+                @csrf
+                @method('PUT')
+                @foreach([
+                    'hero_image' => ['Hoofdfoto', 'hero_image_path'],
+                    'unique_image' => ['Vunex uniek-foto', 'unique_image_path'],
+                    'steps_image' => ['Avontuur-foto', 'steps_image_path'],
+                ] as $field => [$label, $column])
+                    <div class="space-y-3">
+                        <label for="{{ $field }}" class="block text-sm font-medium text-gray-900 dark:text-white">{{ $label }}</label>
+                        @if($siteContent->{$column})
+                            <img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($siteContent->{$column}) }}" alt="Huidige {{ strtolower($label) }}" class="h-36 w-full rounded-lg object-cover">
+                        @else
+                            <div class="grid h-36 place-items-center rounded-lg border border-dashed border-gray-300 text-sm text-gray-500 dark:border-gray-600 dark:text-gray-400">Nog geen foto ingesteld</div>
+                        @endif
+                        <input id="{{ $field }}" name="{{ $field }}" type="file" accept="image/jpeg,image/png,image/webp" class="block w-full text-sm text-gray-600 file:mr-3 file:rounded-md file:border-0 file:bg-indigo-50 file:px-3 file:py-2 file:text-sm file:font-semibold file:text-indigo-700 dark:text-gray-300 dark:file:bg-indigo-500/10 dark:file:text-indigo-300">
+                        @if($siteContent->{$column})
+                            <label class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
+                                <input type="checkbox" name="remove_{{ $field }}" value="1" class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-600">
+                                Verwijder deze foto
+                            </label>
+                        @endif
+                        @error($field)<p class="text-sm text-red-600">{{ $message }}</p>@enderror
+                    </div>
+                @endforeach
+                <div class="flex justify-end border-t border-gray-200 pt-4 dark:border-gray-700 sm:col-span-2 lg:col-span-4">
+                    <button type="submit" class="inline-flex items-center gap-2 rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500">
+                        <x-heroicon-s-check class="h-4 w-4"/> Afbeeldingen opslaan
+                    </button>
+                </div>
+            </form>
+        </section>
+
+        <section class="overflow-hidden rounded-lg bg-white shadow-sm dark:bg-gray-800">
+            <div class="border-b border-gray-200 px-4 py-5 dark:border-gray-700 sm:px-6">
+                <h2 class="text-base font-semibold text-gray-900 dark:text-white">Spelregels beheren</h2>
+                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Maak categorieën aan en voeg per categorie regels toe. Bezoekers vinden ze op de aparte pagina Regels.</p>
+            </div>
+            <div class="space-y-6 p-4 sm:p-6">
+                @if($errors->has('title') || $errors->has('body'))
+                    <div role="alert" class="rounded-md bg-red-50 p-3 text-sm text-red-700 dark:bg-red-500/10 dark:text-red-300">
+                        Controleer de titel en uitleg van de regel. De titel mag maximaal 160 tekens zijn en de uitleg maximaal 5000.
+                    </div>
+                @endif
+                <form action="{{ route('portal.admin.settings.site-rules.categories.store') }}" method="POST" class="flex flex-col gap-3 sm:flex-row">
+                    @csrf
+                    <label for="site-rule-category-name" class="sr-only">Nieuwe categorie</label>
+                    <input id="site-rule-category-name" name="name" required maxlength="100" placeholder="Nieuwe categorie, bijvoorbeeld Roleplay" class="min-w-0 flex-1 rounded-md border-0 bg-white px-3 py-2.5 text-sm text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 dark:bg-gray-700 dark:text-white dark:ring-gray-600">
+                    <button type="submit" class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500">Categorie toevoegen</button>
+                    @error('name')<p class="text-sm text-red-600">{{ $message }}</p>@enderror
+                </form>
+
+                @forelse($siteRuleCategories as $category)
+                    <article class="rounded-lg border border-gray-200 dark:border-gray-700">
+                        <div class="flex flex-wrap items-center justify-between gap-3 border-b border-gray-200 px-4 py-3 dark:border-gray-700">
+                            <h3 class="font-semibold text-gray-900 dark:text-white">{{ $category->name }}</h3>
+                            <form action="{{ route('portal.admin.settings.site-rules.categories.destroy', $category) }}" method="POST" onsubmit="return confirm('Verwijder deze categorie en alle regels erin?')">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="text-sm font-medium text-red-600 hover:text-red-500">Categorie verwijderen</button>
+                            </form>
+                        </div>
+                        <div class="space-y-3 p-4">
+                            @forelse($category->rules as $siteRule)
+                                <div class="rounded-md bg-gray-50 p-3 dark:bg-gray-700/50">
+                                    <form action="{{ route('portal.admin.settings.site-rules.update', $siteRule) }}" method="POST" class="grid gap-3">
+                                        @csrf
+                                        @method('PUT')
+                                        <input name="title" required maxlength="160" value="{{ $siteRule->title }}" aria-label="Titel van de regel" class="rounded-md border-0 bg-white px-3 py-2 text-sm text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 dark:bg-gray-700 dark:text-white dark:ring-gray-600">
+                                        <textarea name="body" required maxlength="5000" rows="2" aria-label="Uitleg van de regel" class="rounded-md border-0 bg-white px-3 py-2 text-sm text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 dark:bg-gray-700 dark:text-white dark:ring-gray-600">{{ $siteRule->body }}</textarea>
+                                        <div class="flex flex-wrap justify-between gap-2">
+                                            <button type="submit" class="text-sm font-semibold text-indigo-600 hover:text-indigo-500">Wijzigingen opslaan</button>
+                                            <button form="delete-site-rule-{{ $siteRule->id }}" type="submit" class="text-sm font-medium text-red-600 hover:text-red-500">Verwijderen</button>
+                                        </div>
+                                    </form>
+                                    <form id="delete-site-rule-{{ $siteRule->id }}" action="{{ route('portal.admin.settings.site-rules.destroy', $siteRule) }}" method="POST">
+                                        @csrf
+                                        @method('DELETE')
+                                    </form>
+                                </div>
+                            @empty
+                                <p class="text-sm text-gray-500 dark:text-gray-400">Nog geen regels in deze categorie.</p>
+                            @endforelse
+                            <form action="{{ route('portal.admin.settings.site-rules.store', $category) }}" method="POST" class="grid gap-3 border-t border-gray-200 pt-4 dark:border-gray-700">
+                                @csrf
+                                <input name="title" required maxlength="160" placeholder="Titel van de regel" class="rounded-md border-0 bg-white px-3 py-2.5 text-sm text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 dark:bg-gray-700 dark:text-white dark:ring-gray-600">
+                                <textarea name="body" required maxlength="5000" rows="2" placeholder="Leg de regel duidelijk uit" class="rounded-md border-0 bg-white px-3 py-2.5 text-sm text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 dark:bg-gray-700 dark:text-white dark:ring-gray-600"></textarea>
+                                <button type="submit" class="justify-self-start rounded-md bg-gray-900 px-4 py-2 text-sm font-semibold text-white hover:bg-gray-700 dark:bg-gray-600 dark:hover:bg-gray-500">Regel toevoegen</button>
+                            </form>
+                        </div>
+                    </article>
+                @empty
+                    <p class="rounded-lg bg-gray-50 p-4 text-sm text-gray-600 dark:bg-gray-700/50 dark:text-gray-300">Er zijn nog geen categorieën. Voeg hierboven je eerste categorie toe.</p>
+                @endforelse
+            </div>
         </section>
 
         <!-- Main Content -->

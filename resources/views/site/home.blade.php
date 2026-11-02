@@ -11,13 +11,14 @@
 <body class="site-page">
     <header class="site-header">
         <a href="{{ route('site.home') }}" class="site-brand" aria-label="Vunex — home">
-            <span class="site-brand-mark"><img src="{{ asset('images/brand/logo.svg') }}" alt=""></span>
+            <span class="site-brand-mark"><img src="{{ $branding->logoUrl() }}" alt="" @class(['omt-pixel' => $branding->isLogoPixelated()])></span>
             <span>Vunex<small>MINECRAFT ROLEPLAY</small></span>
         </a>
 
         <nav class="site-nav" aria-label="Hoofdnavigatie">
             <a href="#over-ons">Over ons</a>
-            <a href="#regels">Onze regels</a>
+            <a href="{{ route('site.rules') }}">Onze regels</a>
+            <a href="#starten">Beginnen</a>
         </nav>
 
         <div class="site-account">
@@ -70,21 +71,41 @@
                     @endauth
                 </div>
                 <div class="site-hero-note"><span class="site-status-dot"></span> Jouw personage. Jouw keuzes. Jouw verhaal.</div>
+                <div class="site-server-address"><span>SERVER IP</span><code>play.vunex.nl</code></div>
             </div>
-            <div class="site-hero-art" aria-hidden="true">
+            <div class="site-hero-art">
                 <div class="site-art-sun"></div>
                 <div class="site-art-orbit site-art-orbit-one"></div>
                 <div class="site-art-orbit site-art-orbit-two"></div>
                 <div class="site-art-card site-art-card-main">
-                    <span class="site-art-card-kicker">WESTERDAM · 18:42</span>
-                    <div class="site-art-skyline">
-                        <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
-                    </div>
-                    <div class="site-art-street"></div>
-                    <div class="site-art-card-footer"><span>DE STAD WACHT OP JOU</span><span class="site-art-coordinate">52° 09' N</span></div>
+                    @if($content->hero_image_path)
+                        <img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($content->hero_image_path) }}" alt="" class="site-art-photo">
+                        <div class="site-art-photo-shade"></div>
+                    @else
+                        <span class="site-art-card-kicker">VUNEX · JOUW NIEUWE WERELD</span>
+                        <div class="site-art-skyline">
+                            <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+                        </div>
+                        <div class="site-art-street"></div>
+                    @endif
+                    <div class="site-art-card-footer"><span>DE STAD WACHT OP JOU</span><span class="site-art-coordinate">VUNEX</span></div>
                 </div>
                 <div class="site-art-float site-art-float-top"><span class="site-art-float-icon">✳</span><span><b>Een wereld om te ontdekken</b><small>Er is altijd iets te beleven</small></span></div>
-                <div class="site-art-float site-art-float-bottom"><span class="site-art-online-dot"></span><span><b>Jouw volgende hoofdstuk</b><small>Begint met één stap</small></span></div>
+                <div class="site-art-float site-art-float-bottom">
+                    <span class="{{ $serverStatus['online'] ? 'site-art-online-dot' : 'site-art-offline-dot' }}"></span>
+                    <span>
+                        <b>
+                            @if($serverStatus['online'])
+                                {{ $serverStatus['players'] }} speler{{ $serverStatus['players'] === 1 ? '' : 's' }} online
+                            @elseif($serverStatus['available'])
+                                Server is offline
+                            @else
+                                Status tijdelijk niet beschikbaar
+                            @endif
+                        </b>
+                        <small>{{ $serverStatus['online'] && $serverStatus['max_players'] ? 'van maximaal '.$serverStatus['max_players'].' spelers' : 'play.vunex.nl' }}</small>
+                    </span>
+                </div>
                 <span class="site-art-spark site-art-spark-one">✳</span>
                 <span class="site-art-spark site-art-spark-two">✦</span>
             </div>
@@ -106,40 +127,63 @@
                     </a>
                 </div>
             </div>
+            <div class="site-unique-heading">
+                <div><p class="site-section-kicker">MEER DAN ALLEEN MINECRAFT</p><h2>Wat maakt Vunex uniek?</h2></div>
+                <p>Een levende roleplaywereld met systemen die jouw keuzes echt laten meetellen.</p>
+            </div>
+            @if($content->unique_image_path)
+                <img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($content->unique_image_path) }}" alt="De wereld van Vunex" class="site-unique-photo">
+            @endif
             <div class="site-feature-grid">
                 <article class="site-feature-card">
-                    <span class="site-feature-number">01 / SAMEN</span>
+                    <span class="site-feature-number">01 / ECONOMIE</span>
                     <span class="site-feature-icon"><x-heroicon-o-user-group class="h-6 w-6"/></span>
-                    <h3>Een stad om in te leven</h3>
-                    <p>Ontmoet andere spelers en geef samen kleur aan het dagelijks leven in de stad.</p>
+                    <h3>Een levende economie</h3>
+                    <p>Verdien met je werk, beheer je geld en bouw stap voor stap aan jouw toekomst.</p>
                 </article>
                 <article class="site-feature-card">
-                    <span class="site-feature-number">02 / GROEI</span>
+                    <span class="site-feature-number">02 / ONTWIKKELING</span>
                     <span class="site-feature-icon"><x-heroicon-o-arrow-trending-up class="h-6 w-6"/></span>
-                    <h3>Jouw eigen pad</h3>
-                    <p>Ontdek beroepen, volg opleidingen en bouw stap voor stap aan jouw toekomst.</p>
+                    <h3>Opleidingen en beroepen</h3>
+                    <p>Leer nieuwe vaardigheden, volg jouw route en ontgrendel nieuwe mogelijkheden.</p>
                 </article>
                 <article class="site-feature-card">
-                    <span class="site-feature-number">03 / BELEEF</span>
+                    <span class="site-feature-number">03 / JOUW STAD</span>
                     <span class="site-feature-icon"><x-heroicon-o-sparkles class="h-6 w-6"/></span>
-                    <h3>Verhalen die blijven</h3>
-                    <p>Van kleine ontmoetingen tot grote plannen: jouw keuzes maken de roleplay.</p>
+                    <h3>Jouw plek in de stad</h3>
+                    <p>Koop of huur een plot en maak van jouw eigen plek een thuis of onderneming.</p>
+                </article>
+                <article class="site-feature-card">
+                    <span class="site-feature-number">04 / RECHTVAARDIG</span>
+                    <span class="site-feature-icon"><x-heroicon-o-shield-check class="h-6 w-6"/></span>
+                    <h3>Een stad met duidelijke afspraken</h3>
+                    <p>Politie, strafbladen en VOG-aanvragen helpen de stad eerlijk en veilig te houden.</p>
                 </article>
             </div>
         </section>
 
-        <section id="regels" class="site-rules-section">
-            <div class="site-section site-rules-grid">
-                <div class="site-rules-intro">
-                    <div class="site-section-marker site-section-marker-light"><span>02</span><i></i> SAMEN SPELEN</div>
-                    <p class="site-section-kicker">EEN FIJNE STAD MAKEN WE SAMEN</p>
-                    <h2>{{ $content->rules_title }}</h2>
-                    <p class="site-rules-description">Neem even de tijd om onze regels door te lezen. Zo weet iedereen waar die aan toe is.</p>
+        <section id="starten" class="site-steps-section">
+            <div class="site-section site-steps-layout">
+                <div class="site-steps-copy">
+                    <div class="site-section-marker"><span>02</span><i></i> JOUW AVONTUUR</div>
+                    <p class="site-section-kicker">KLAAR OM TE BEGINNEN?</p>
+                    <h2>Hoe begin je jouw avontuur?</h2>
+                    <p class="site-steps-description">Je staat er niet alleen voor. Met deze vier stappen ben je zo onderweg in Vunex.</p>
+                    <ol class="site-steps-list">
+                        <li><span>01</span><div><h3>Start Minecraft</h3><p>Open Minecraft en kies de Java-editie.</p></div></li>
+                        <li><span>02</span><div><h3>Voeg de server toe</h3><p>Gebruik het adres <strong>play.vunex.nl</strong>.</p></div></li>
+                        <li><span>03</span><div><h3>Kies je beroep</h3><p>Ontdek de mogelijkheden en vind wat bij jouw personage past.</p></div></li>
+                        <li><span>04</span><div><h3>Bouw je welvaart</h3><p>Werk, ontmoet spelers en bouw aan jouw eigen toekomst.</p></div></li>
+                    </ol>
+                    <p class="site-steps-footnote">Maak daarna een account op deze website om je gegevens en voortgang in het Vunex-panel te bekijken.</p>
                 </div>
-                <div class="site-rules-card">
-                    <div class="site-rules-card-header"><span>STADSAFSPRAKEN</span><span>Vunex</span></div>
-                    <div class="site-rules-copy">{{ $content->rules_text }}</div>
-                    <div class="site-rules-card-footer"><x-heroicon-o-heart class="h-4 w-4"/> Respect voor elkaar staat altijd op één.</div>
+                <div class="site-steps-art">
+                    @if($content->steps_image_path)
+                        <img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($content->steps_image_path) }}" alt="Bouw jouw avontuur op Vunex" class="site-steps-photo">
+                    @else
+                        <div class="site-steps-placeholder"><x-heroicon-o-map class="h-12 w-12"/><span>JOUW VERHAAL BEGINT HIER</span></div>
+                    @endif
+                    <div class="site-steps-ip"><span>SERVERADRES</span><strong>play.vunex.nl</strong></div>
                 </div>
             </div>
         </section>
@@ -157,11 +201,11 @@
 
     <footer class="site-footer">
         <a href="{{ route('site.home') }}" class="site-brand site-brand-footer">
-            <span class="site-brand-mark"><img src="{{ asset('images/brand/logo.svg') }}" alt=""></span>
+            <span class="site-brand-mark"><img src="{{ $branding->logoUrl() }}" alt="" @class(['omt-pixel' => $branding->isLogoPixelated()])></span>
             <span>Vunex<small>MINECRAFT ROLEPLAY</small></span>
         </a>
         <span>Een wereld gebouwd op verhalen, gemaakt door spelers.</span>
-        <a href="#regels">Lees de regels <x-heroicon-o-arrow-up-right class="h-3.5 w-3.5"/></a>
+        <a href="{{ route('site.rules') }}">Lees de regels <x-heroicon-o-arrow-up-right class="h-3.5 w-3.5"/></a>
     </footer>
 </body>
 </html>
