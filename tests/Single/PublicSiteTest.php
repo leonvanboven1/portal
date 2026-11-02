@@ -178,9 +178,9 @@ it('lets settings managers create rule categories and rules for the separate rul
 });
 
 it('removes a homepage photo from storage', function () {
-    Storage::fake('public');
-    $path = 'site/vunex.png';
-    Storage::disk('public')->put($path, 'test image');
+    $disk = Storage::disk('public');
+    $path = 'site/'.Str::uuid().'.png';
+    $disk->put($path, 'test image');
     SiteContent::current()->update(['hero_image_path' => $path]);
 
     $request = Request::create('/portal/admin/settings/site-images', 'POST', [
@@ -189,8 +189,12 @@ it('removes a homepage photo from storage', function () {
     $request->setLaravelSession(app('session')->driver());
     app()->instance('request', $request);
 
-    app(SettingsController::class)->updateSiteImages($request);
+    try {
+        app(SettingsController::class)->updateSiteImages($request);
 
-    expect(SiteContent::current()->hero_image_path)->toBeNull();
-    Storage::disk('public')->assertMissing($path);
+        expect(SiteContent::current()->hero_image_path)->toBeNull();
+        expect($disk->exists($path))->toBeFalse();
+    } finally {
+        $disk->delete($path);
+    }
 });
