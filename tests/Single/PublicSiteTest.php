@@ -180,8 +180,9 @@ it('lets settings managers replace public homepage photos', function () {
     $admin = siteUser(['manage-settings']);
 
     $this->actingAs($admin)
-        ->post('http://portaal.test/portal/admin/settings/site-images', [
+        ->call('POST', 'http://portaal.test/portal/admin/settings/site-images', [
             '_method' => 'PUT',
+        ], [], [
             'hero_image' => UploadedFile::fake()->image('vunex.jpg'),
         ])
         ->assertSessionHas('success', 'De afbeeldingen van de website zijn bijgewerkt.');
