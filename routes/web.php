@@ -6,6 +6,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Auth\MinecraftVerificationController;
+use App\Http\Controllers\Auth\AccountSettingsController;
 use App\Http\Controllers\Portal\DashboardController;
 use App\Http\Controllers\Portal\EducationController;
 use App\Http\Controllers\Portal\Admin\EducationCourseController;
@@ -69,6 +70,10 @@ Route::get('beheerder-worden/{token}', AdminClaimController::class)
     ->name('admin-claim');
 
 Route::middleware('auth')->group(function () {
+    Route::get('/account', [AccountSettingsController::class, 'edit'])->name('account.edit');
+    Route::put('/account/email', [AccountSettingsController::class, 'updateEmail'])->name('account.email.update');
+    Route::put('/account/password', [AccountSettingsController::class, 'updatePassword'])->name('account.password.update');
+
     Route::get('/verify-minecraft', [MinecraftVerificationController::class, 'show'])
         ->name('minecraft.verify');
     Route::post('/verify-minecraft', [MinecraftVerificationController::class, 'verify']);

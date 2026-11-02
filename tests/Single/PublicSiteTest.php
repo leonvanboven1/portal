@@ -67,9 +67,54 @@ it('serves the public website to guests and logged-in users', function () {
     $this->actingAs($user)->get('http://portaal.test/')
         ->assertOk()
         ->assertSee($user->minecraft_username)
+        ->assertSee('Mijn gegevens')
+        ->assertSee(route('account.edit'))
         ->assertSee('Naar het panel')
         ->assertSee('Uitloggen')
         ->assertSee('mc-heads.net/avatar/'.$user->minecraft_username.'/40');
+
+    $this->actingAs($user)->get('http://portaal.test/regels')
+        ->assertOk()
+        ->assertSee('Mijn gegevens')
+        ->assertSee(route('account.edit'));
+});
+
+it('lets a signed-in user update email and password without changing their Minecraft username', function () {
+    $user = siteUser();
+    $minecraftUsername = $user->minecraft_username;
+
+    $this->get('http://portaal.test/account')
+        ->assertRedirect(route('login'));
+
+    $this->actingAs($user)
+        ->get('http://portaal.test/account')
+        ->assertOk()
+        ->assertSee($user->email)
+        ->assertSee($minecraftUsername)
+        ->assertDontSee('name="minecraft_username"', false);
+
+    $this->put('http://portaal.test/account/email', [
+        'email' => 'nieuw@example.com',
+        'email_current_password' => 'geheim123',
+    ])->assertSessionHas('success', 'Je e-mailadres is bijgewerkt.');
+
+    expect($user->fresh()->email)->toBe('nieuw@example.com')
+        ->and($user->fresh()->minecraft_username)->toBe($minecraftUsername);
+
+    $this->put('http://portaal.test/account/password', [
+        'current_password' => 'verkeerd',
+        'password' => 'nieuwgeheim456',
+        'password_confirmation' => 'nieuwgeheim456',
+    ])->assertSessionHasErrors('current_password');
+
+    $this->put('http://portaal.test/account/password', [
+        'current_password' => 'geheim123',
+        'password' => 'nieuwgeheim456',
+        'password_confirmation' => 'nieuwgeheim456',
+    ])->assertSessionHas('success', 'Je wachtwoord is bijgewerkt.');
+
+    expect(Hash::check('nieuwgeheim456', $user->fresh()->password))->toBeTrue()
+        ->and($user->fresh()->minecraft_username)->toBe($minecraftUsername);
 });
 
 it('uses the uploaded appearance logo across the public website', function () {
