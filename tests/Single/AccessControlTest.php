@@ -87,7 +87,7 @@ it('lets a player use a feature only with its permission', function () {
     Role::where('slug', 'player')->first()->permissions()->detach(Permission::where('slug', 'use-broker')->value('id'));
 
     $this->actingAs($user->fresh())->get('http://portaal.test/plots/te-koop')->assertForbidden();
-    $this->actingAs($user->fresh())->get('http://portaal.test/')->assertOk()->assertDontSee('Makelaar');
+    $this->actingAs($user->fresh())->get('http://portaal.test/dashboard')->assertOk()->assertDontSee('Makelaar');
 });
 
 it('opens only the management pages a role has a permission for', function () {

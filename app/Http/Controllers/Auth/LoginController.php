@@ -29,7 +29,7 @@ class LoginController extends Controller
         }
 
         return back()->withErrors([
-            'email' => 'The provided credentials do not match our records.',
+            'email' => 'De inloggegevens komen niet overeen met een account.',
         ])->onlyInput('email');
     }
 

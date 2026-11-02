@@ -13,6 +13,52 @@
             </a>
         </div>
 
+        <section class="overflow-hidden rounded-lg bg-white shadow-sm dark:bg-gray-800">
+            <div class="border-b border-gray-200 px-4 py-5 dark:border-gray-700 sm:px-6">
+                <div class="flex items-start gap-3">
+                    <span class="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-indigo-50 text-indigo-600 dark:bg-indigo-500/10 dark:text-indigo-400">
+                        <x-heroicon-o-globe-americas class="h-5 w-5"/>
+                    </span>
+                    <div>
+                        <h2 class="text-base font-semibold text-gray-900 dark:text-white">Openbare website</h2>
+                        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Pas de introductie, informatie en regels aan die bezoekers op de startpagina zien.</p>
+                    </div>
+                </div>
+            </div>
+            <form action="{{ route('portal.admin.settings.update-site-content') }}" method="POST" class="space-y-5 p-4 sm:p-6">
+                @csrf
+                @method('PUT')
+                @foreach([
+                    'hero_title' => ['Hoofdtitel', 'Bijvoorbeeld: Jouw verhaal begint hier.'],
+                    'hero_text' => ['Introductie', 'Korte tekst die bezoekers als eerste lezen.'],
+                    'about_title' => ['Titel over ons', 'De titel boven de informatie over de stad.'],
+                    'about_text' => ['Informatie over de stad', 'Vertel bezoekers wat jouw roleplayserver bijzonder maakt.'],
+                    'rules_title' => ['Titel van de regels', 'Bijvoorbeeld: Samen houden we de stad leuk.'],
+                    'rules_text' => ['Onze regels', 'Zet iedere regel op een eigen regel. De tekst wordt veilig als platte tekst getoond.'],
+                ] as $field => [$label, $hint])
+                    <div>
+                        <label for="{{ $field }}" class="block text-sm font-medium text-gray-900 dark:text-white">{{ $label }}</label>
+                        @if(in_array($field, ['hero_title', 'about_title', 'rules_title'], true))
+                            <input id="{{ $field }}" name="{{ $field }}" type="text" maxlength="120" required
+                                   value="{{ old($field, $siteContent->{$field}) }}"
+                                   class="mt-1.5 block w-full rounded-md border-0 bg-white px-3 py-2.5 text-sm text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 dark:bg-gray-700 dark:text-white dark:ring-gray-600 dark:focus:ring-indigo-500">
+                        @else
+                            <textarea id="{{ $field }}" name="{{ $field }}" rows="{{ $field === 'rules_text' ? 8 : 4 }}" required
+                                      class="mt-1.5 block w-full rounded-md border-0 bg-white px-3 py-2.5 text-sm text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 dark:bg-gray-700 dark:text-white dark:ring-gray-600 dark:focus:ring-indigo-500">{{ old($field, $siteContent->{$field}) }}</textarea>
+                        @endif
+                        <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">{{ $hint }}</p>
+                        @error($field)<p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>@enderror
+                    </div>
+                @endforeach
+                <div class="flex justify-end border-t border-gray-200 pt-4 dark:border-gray-700">
+                    <button type="submit" class="inline-flex items-center gap-2 rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-500">
+                        <x-heroicon-s-check class="h-4 w-4"/>
+                        Website opslaan
+                    </button>
+                </div>
+            </form>
+        </section>
+
         <!-- Main Content -->
         <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
             <!-- Left Column - Main Settings -->

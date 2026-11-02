@@ -44,6 +44,7 @@ Het script stelt een paar vragen (adres, naam van je server, waar de plugin draa
 - **Opleidingen:** een leerroute volgen met vereiste stappen, studieduur en cursusgeld; afgeronde opleidingen kunnen toegang geven tot bedrijfsaanvragen.
 - **Politie:** een spelersdatabase met strafbladen voor agenten.
 - **Strafblad:** spelers zien hun eigen strafblad.
+- **Openbare website:** een eigen startpagina met informatie en serverregels, aan te passen door een beheerder.
 - **Beheer:** gebruikers, rollen en rechten, en per onderdeel aan of uit.
 - **Koppelen:** spelers koppelen hun account in Minecraft met `/koppel`.
 - Licht en donker thema, en alles in het Nederlands.

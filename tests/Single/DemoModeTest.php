@@ -24,7 +24,8 @@ it('fills a portal that works without a minecraft server', function () {
 
     $this->post('http://portaal.test/login', ['email' => DemoSeeder::EMAIL, 'password' => DemoSeeder::PASSWORD])->assertRedirect();
 
-    $this->get('http://portaal.test/')->assertOk()->assertSee('Burgemeester');
+    $this->get('http://portaal.test/')->assertOk()->assertSee('Jouw verhaal begint hier.');
+    $this->get('http://portaal.test/dashboard')->assertOk()->assertSee('Burgemeester');
     $this->get('http://portaal.test/portal/bank-accounts')->assertOk()->assertSee('Gemeente Westerdam');
     $this->get('http://portaal.test/portal/plots')->assertOk()->assertSee('westerdam_stadhuis');
     $this->get('http://portaal.test/plots/te-koop')->assertOk()->assertSee('westerdam_kade_12');

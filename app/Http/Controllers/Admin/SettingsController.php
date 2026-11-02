@@ -7,6 +7,7 @@ use App\Models\PortalFeature;
 use App\Models\PermitSetting;
 use App\Models\CompanySetting;
 use App\Models\PlotListingSetting;
+use App\Models\SiteContent;
 use App\Support\Features;
 use Illuminate\Http\Request;
 
@@ -22,7 +23,24 @@ class SettingsController extends Controller
             'plotListingSettings' => PlotListingSetting::first() ?? PlotListingSetting::create([
                 'max_image_size_mb' => PlotListingSetting::DEFAULT_MAX_IMAGE_SIZE_MB,
             ]),
+            'siteContent' => SiteContent::current(),
         ]);
+    }
+
+    public function updateSiteContent(Request $request)
+    {
+        $validated = $request->validate([
+            'hero_title' => ['required', 'string', 'max:120'],
+            'hero_text' => ['required', 'string', 'max:2000'],
+            'about_title' => ['required', 'string', 'max:120'],
+            'about_text' => ['required', 'string', 'max:5000'],
+            'rules_title' => ['required', 'string', 'max:120'],
+            'rules_text' => ['required', 'string', 'max:10000'],
+        ]);
+
+        SiteContent::current()->update($validated);
+
+        return back()->with('success', 'De inhoud van de website is bijgewerkt.');
     }
 
     public function updateFeatures(Request $request)

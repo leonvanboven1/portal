@@ -13,8 +13,14 @@ it('builds the whole app with a plain migrate', function () {
 });
 
 it('serves the portal on any host without tenants', function () {
-    $this->get('http://portaal.test/login')->assertOk()->assertSee(config('app.name'));
+    $this->get('http://portaal.test/login')
+        ->assertOk()
+        ->assertSee(config('app.name'))
+        ->assertSee('Log in op je account')
+        ->assertSee('Terug naar de website');
     $this->get('http://127.0.0.1:8000/login')->assertOk();
+    $this->get('http://portaal.test/')->assertOk()->assertSee('Jouw verhaal begint hier.')->assertSee('Onze regels');
+    $this->get('http://portaal.test/dashboard')->assertRedirect('http://portaal.test/login');
 });
 
 it('has no provisioning api', function () {

@@ -36,8 +36,10 @@ use App\Http\Controllers\Portal\Admin\AdminPlotListingController;
 use App\Http\Controllers\Portal\Admin\AdminPlotRentalOfferController;
 use App\Http\Controllers\Auth\AdminClaimController;
 use App\Http\Controllers\Demo\DemoLoginController;
+use App\Http\Controllers\SiteController;
 
 Route::get('branding/logo', [BrandingController::class, 'logo'])->name('branding.logo');
+Route::get('/', [SiteController::class, 'index'])->name('site.home');
 
 Route::middleware('guest')->group(function () {
     Route::get('register', [RegisterController::class, 'create'])->name('register');
@@ -72,7 +74,7 @@ Route::middleware('auth')->group(function () {
 
     // Every page checks its feature (404 while it is off) and a permission (see App\Support\Permissions).
     Route::middleware('minecraft.verified')->group(function () {
-        Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+        Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
         Route::middleware(['feature:education', 'can:use-education'])->prefix('opleidingen')->name('portal.education.')->group(function () {
             Route::get('/', [EducationController::class, 'index'])->name('index');
@@ -163,6 +165,7 @@ Route::middleware('auth')->group(function () {
                 Route::middleware('can:manage-settings')->group(function () {
                     Route::get('settings', [SettingsController::class, 'index'])->name('settings.index');
                     Route::put('settings/features', [SettingsController::class, 'updateFeatures'])->name('settings.update-features');
+                    Route::put('settings/site-content', [SettingsController::class, 'updateSiteContent'])->name('settings.update-site-content');
                     Route::put('settings/plot-listing-settings', [SettingsController::class, 'updatePlotListingSettings'])
                         ->middleware('feature:broker')
                         ->name('settings.update-plot-listing-settings');

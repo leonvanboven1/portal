@@ -11,7 +11,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400..800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    @include('portal.layouts.partials.branding')
     <script>
         if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
             document.documentElement.classList.add('dark')
@@ -20,7 +19,7 @@
         }
     </script>
 </head>
-<body class="h-full bg-white text-gray-900 dark:bg-gray-900 dark:text-gray-100" x-data="{
+<body class="site-auth-page min-h-full" x-data="{
     darkMode: document.documentElement.classList.contains('dark'),
     toggleDarkMode() {
         this.darkMode = !this.darkMode;
@@ -28,35 +27,50 @@
         document.documentElement.classList.toggle('dark', this.darkMode);
     }
 }">
-    <div class="flex min-h-full flex-col justify-center px-4 py-12">
-        <div class="mx-auto w-full max-w-sm animate-omt-rise">
-            <div class="flex items-center justify-between">
-                <span class="omt-hop flex items-center gap-3 text-base font-bold tracking-tight">
-                    <x-portal.logo />
-                    {{ config('app.name') }}
-                </span>
-                <button @click="toggleDarkMode" type="button" class="rounded-md p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-white"
-                        :aria-label="darkMode ? 'Licht thema' : 'Donker thema'">
-                    <x-heroicon-o-moon x-show="!darkMode" class="h-5 w-5" />
-                    <x-heroicon-o-sun x-show="darkMode" x-cloak class="h-5 w-5" />
-                </button>
+    <a class="site-auth-back" href="{{ route('site.home') }}"><x-heroicon-o-arrow-left class="h-4 w-4"/> Terug naar de website</a>
+    <div class="site-auth-layout">
+        <aside class="site-auth-aside">
+            <a href="{{ route('site.home') }}" class="site-brand site-auth-brand">
+                <span class="site-brand-mark"><img src="{{ asset('images/brand/logo.svg') }}" alt=""></span>
+                <span>{{ config('app.name') }}<small>MINECRAFT ROLEPLAY</small></span>
+            </a>
+            <div class="site-auth-aside-copy">
+                <span class="site-eyebrow"><span></span> DE STAD IS VAN JOU</span>
+                <h2>Fijn dat je<br>weer <em>terug bent.</em></h2>
+                <p>Log in en pak jouw verhaal weer op. Je volgende avontuur is dichterbij dan je denkt.</p>
             </div>
+            <div class="site-auth-art" aria-hidden="true">
+                <span></span><span></span><span></span><span></span><span></span>
+            </div>
+            <p class="site-auth-aside-footer">JOUW PERSONAGE. JOUW KEUZES. JOUW VERHAAL.</p>
+        </aside>
 
-            <h1 class="mt-10 text-3xl font-bold tracking-tight">@yield('header')</h1>
-            @hasSection('subheader')
-                <p class="mt-2 text-gray-600 dark:text-gray-400">@yield('subheader')</p>
-            @endif
-
-            @if (session()->has(\App\Services\Tenancy\AdminClaim::SESSION_KEY))
-                <div class="mt-6 rounded-md border border-indigo-200 bg-indigo-50 px-4 py-3 text-sm text-indigo-900 dark:border-indigo-500/30 dark:bg-indigo-500/10 dark:text-indigo-200">
-                    Log in of maak een account aan. Daarna ben je beheerder van dit portaal.
+        <main class="site-auth-main">
+            <div class="site-auth-card">
+                <div class="site-auth-card-heading">
+                    <span class="site-auth-card-mark"><x-heroicon-o-lock-closed class="h-5 w-5"/></span>
+                    <p class="site-section-kicker">WELKOM TERUG</p>
+                    <h1>@yield('header')</h1>
+                    @hasSection('subheader')
+                        <p class="site-auth-subheader">@yield('subheader')</p>
+                    @else
+                        <p class="site-auth-subheader">Log in om verder te gaan naar jouw account.</p>
+                    @endif
                 </div>
-            @endif
 
-            <div class="mt-8">
-                @yield('content')
+                @if (session()->has(\App\Services\Tenancy\AdminClaim::SESSION_KEY))
+                    <div class="site-auth-claim-notice">
+                        Log in of maak een account aan. Daarna ben je beheerder van dit portaal.
+                    </div>
+                @endif
+
+                <div class="site-auth-form">
+                    @yield('content')
+                </div>
+                <a class="site-auth-home-link" href="{{ route('site.home') }}">← Terug naar {{ config('app.name') }}</a>
             </div>
-        </div>
+            <p class="site-auth-legal">Door verder te gaan, maak je deel uit van {{ config('app.name') }}.</p>
+        </main>
     </div>
 </body>
 </html>
