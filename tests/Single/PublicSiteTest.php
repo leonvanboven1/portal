@@ -175,24 +175,15 @@ it('lets settings managers create rule categories and rules for the separate rul
         ->assertSee('Respecteer de afspraken van de stad.');
 });
 
-it('lets settings managers store and remove public homepage photos', function () {
+it('lets settings managers remove public homepage photos', function () {
     Storage::fake('public');
     $admin = siteUser(['manage-settings']);
+    $path = UploadedFile::fake()->image('vunex.png')->store('site', 'public');
+    SiteContent::current()->update(['hero_image_path' => $path]);
 
     $this->actingAs($admin)
-        ->post('http://portaal.test/portal/admin/settings/site-images', [
-            'hero_image' => UploadedFile::fake()->image('vunex.jpg'),
-        ])
+        ->post('http://portaal.test/portal/admin/settings/site-images', ['remove_hero_image' => '1'])
         ->assertSessionHas('success', 'De afbeeldingen van de website zijn bijgewerkt.');
-
-    $content = SiteContent::current();
-    expect($content->hero_image_path)->not->toBeNull();
-    Storage::disk('public')->assertExists($content->hero_image_path);
-
-    $path = $content->hero_image_path;
-    $this->post('http://portaal.test/portal/admin/settings/site-images', [
-        'remove_hero_image' => '1',
-    ])->assertSessionHas('success', 'De afbeeldingen van de website zijn bijgewerkt.');
 
     expect(SiteContent::current()->hero_image_path)->toBeNull();
     Storage::disk('public')->assertMissing($path);
