@@ -180,7 +180,9 @@ it('lets settings managers create rule categories and rules for the separate rul
 it('stores and removes public homepage photos', function () {
     Storage::fake('public');
 
-    $request = Request::create('/portal/admin/settings/site-images', 'PUT', [], [], [
+    $request = Request::create('/portal/admin/settings/site-images', 'POST', [
+        '_method' => 'PUT',
+    ], [], [
         'hero_image' => UploadedFile::fake()->image('vunex.jpg'),
     ]);
     expect($request->hasFile('hero_image'))->toBeTrue();
