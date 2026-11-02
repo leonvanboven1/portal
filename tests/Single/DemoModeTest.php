@@ -15,6 +15,11 @@ it('refuses to seed demo data outside demo mode', function () {
 
 it('fills a portal that works without a minecraft server', function () {
     Http::preventStrayRequests();
+    Http::fake([
+        '*api.mcsrvstat.us/*' => Http::response([
+            'online' => false,
+        ]),
+    ]);
     config(['portal.demo' => true]);
     $this->app->bind(PluginApiService::class, FakePluginApiService::class);
     $this->app->bind(MojangApiService::class, FakeMojangApiService::class);
