@@ -77,7 +77,7 @@
                 <div class="site-auth-form">
                     @yield('content')
                 </div>
-                <a class="site-auth-home-link" href="{{ route('site.home') }}">← Terug naar {{ config('app.name') }}</a>
+                <a class="site-auth-home-link" href="{{ route('site.home') }}">← Terug naar de website</a>
             </div>
             <p class="site-auth-legal">Door verder te gaan, maak je deel uit van {{ config('app.name') }}.</p>
         </main>
