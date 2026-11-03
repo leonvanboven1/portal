@@ -45,7 +45,7 @@ Route::get('branding/logo', [BrandingController::class, 'logo'])->name('branding
 Route::get('/', [SiteController::class, 'index'])->name('site.home');
 Route::get('/regels', [SiteController::class, 'rules'])->name('site.rules');
 Route::get('/live-chat/status', [SiteChatController::class, 'status'])->middleware('throttle:120,1')->name('site-chat.status');
-Route::post('/live-chat', [SiteChatController::class, 'start'])->middleware('throttle:10,1')->name('site-chat.start');
+Route::post('/live-chat', [SiteChatController::class, 'start'])->middleware('throttle:live-chat-start')->name('site-chat.start');
 Route::post('/live-chat/message', [SiteChatController::class, 'send'])->middleware('throttle:30,1')->name('site-chat.send');
 
 Route::middleware('guest')->group(function () {

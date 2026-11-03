@@ -53,5 +53,9 @@ class AppServiceProvider extends ServiceProvider
         RateLimiter::for('password-reset', fn (Request $request) => Limit::perMinute(5)->by('password-reset|'.$perTenant($request)));
         RateLimiter::for('admin-claim', fn (Request $request) => Limit::perMinute(10)->by('admin-claim|'.$perTenant($request)));
         RateLimiter::for('minecraft-verify', fn (Request $request) => Limit::perMinute(30)->by('minecraft-verify|'.$perTenant($request)));
+        RateLimiter::for('live-chat-start', fn (Request $request) => [
+            Limit::perMinute(10)->by('live-chat-start-session|'.$perTenant($request).'|'.$request->session()->getId()),
+            Limit::perMinute(60)->by('live-chat-start-ip|'.$perTenant($request)),
+        ]);
     }
 }
