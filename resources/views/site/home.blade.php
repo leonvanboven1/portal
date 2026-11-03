@@ -3,6 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="theme-color" content="#f5f4ef">
     <meta name="description" content="{{ $content->hero_text }}">
     <title>Vunex — {{ $content->hero_title }}</title>
@@ -15,11 +16,7 @@
             <span>Vunex<small>MINECRAFT ROLEPLAY</small></span>
         </a>
 
-        <nav class="site-nav" aria-label="Hoofdnavigatie">
-            <a href="#over-ons">Over ons</a>
-            <a href="{{ route('site.rules') }}">Onze regels</a>
-            <a href="#starten">Beginnen</a>
-        </nav>
+        @include('site.partials.navigation')
 
         @include('site.partials.account-menu')
     </header>
@@ -169,13 +166,6 @@
         </section>
     </main>
 
-    <footer class="site-footer">
-        <a href="{{ route('site.home') }}" class="site-brand site-brand-footer">
-            <span class="site-brand-mark"><img src="{{ $branding->logoUrl() }}" alt="" @class(['omt-pixel' => $branding->isLogoPixelated()])></span>
-            <span>Vunex<small>MINECRAFT ROLEPLAY</small></span>
-        </a>
-        <span>Een wereld gebouwd op verhalen, gemaakt door spelers.</span>
-        <a href="{{ route('site.rules') }}">Lees de regels <x-heroicon-o-arrow-up-right class="h-3.5 w-3.5"/></a>
-    </footer>
+    @include('site.partials.footer')
 </body>
 </html>

@@ -35,13 +35,18 @@ use App\Http\Controllers\Portal\BankTransactionController;
 use App\Http\Controllers\Portal\Admin\AdminPlotController;
 use App\Http\Controllers\Portal\Admin\AdminPlotListingController;
 use App\Http\Controllers\Portal\Admin\AdminPlotRentalOfferController;
+use App\Http\Controllers\Portal\Admin\LiveChatController;
 use App\Http\Controllers\Auth\AdminClaimController;
 use App\Http\Controllers\Demo\DemoLoginController;
+use App\Http\Controllers\SiteChatController;
 use App\Http\Controllers\SiteController;
 
 Route::get('branding/logo', [BrandingController::class, 'logo'])->name('branding.logo');
 Route::get('/', [SiteController::class, 'index'])->name('site.home');
 Route::get('/regels', [SiteController::class, 'rules'])->name('site.rules');
+Route::get('/live-chat/status', [SiteChatController::class, 'status'])->middleware('throttle:120,1')->name('site-chat.status');
+Route::post('/live-chat', [SiteChatController::class, 'start'])->middleware('throttle:10,1')->name('site-chat.start');
+Route::post('/live-chat/message', [SiteChatController::class, 'send'])->middleware('throttle:30,1')->name('site-chat.send');
 
 Route::middleware('guest')->group(function () {
     Route::get('register', [RegisterController::class, 'create'])->name('register');
@@ -73,6 +78,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/account', [AccountSettingsController::class, 'edit'])->name('account.edit');
     Route::put('/account/email', [AccountSettingsController::class, 'updateEmail'])->name('account.email.update');
     Route::put('/account/password', [AccountSettingsController::class, 'updatePassword'])->name('account.password.update');
+    Route::middleware('can:manage-live-chat')->prefix('/portal/admin/live-chat')->name('portal.admin.live-chat.')->group(function () {
+        Route::get('/', [LiveChatController::class, 'index'])->name('index');
+        Route::post('/presence', [LiveChatController::class, 'heartbeat'])->middleware('throttle:120,1')->name('presence');
+        Route::get('/conversations', [LiveChatController::class, 'conversations'])->middleware('throttle:120,1')->name('conversations');
+        Route::get('/conversations/{conversationId}', [LiveChatController::class, 'messages'])->middleware('throttle:120,1')->name('messages');
+        Route::post('/conversations/{conversationId}/messages', [LiveChatController::class, 'reply'])->middleware('throttle:30,1')->name('reply');
+        Route::post('/conversations/{conversationId}/close', [LiveChatController::class, 'close'])->middleware('throttle:30,1')->name('close');
+    });
 
     Route::get('/verify-minecraft', [MinecraftVerificationController::class, 'show'])
         ->name('minecraft.verify');

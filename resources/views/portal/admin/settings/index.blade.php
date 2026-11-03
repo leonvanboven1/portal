@@ -94,53 +94,67 @@
             </form>
         </section>
 
-        <section class="overflow-hidden rounded-lg bg-white shadow-sm dark:bg-gray-800">
-            <div class="border-b border-gray-200 px-4 py-5 dark:border-gray-700 sm:px-6">
-                <h2 class="text-base font-semibold text-gray-900 dark:text-white">Spelregels beheren</h2>
-                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Maak categorieën aan en voeg per categorie regels toe. Bezoekers vinden ze op de aparte pagina Regels.</p>
-            </div>
-            <div class="space-y-6 p-4 sm:p-6">
+        <section class="rounded-lg bg-white p-4 shadow-sm dark:bg-gray-800 sm:p-5">
+            <h2 class="text-base font-semibold text-gray-900 dark:text-white">Categorie toevoegen</h2>
+            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Nieuwe categorieën blijven direct zichtbaar, ook als het regelbeheer is ingeklapt.</p>
+            <form action="{{ route('portal.admin.settings.site-rules.categories.store') }}" method="POST" class="mt-4 flex flex-col gap-3 sm:flex-row">
+                @csrf
+                <label for="site-rule-category-name" class="sr-only">Nieuwe categorie</label>
+                <input id="site-rule-category-name" name="name" required maxlength="100" placeholder="Nieuwe categorie, bijvoorbeeld Roleplay" class="min-w-0 flex-1 rounded-md border-0 bg-white px-3 py-2.5 text-sm text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 dark:bg-gray-700 dark:text-white dark:ring-gray-600">
+                <button type="submit" class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500">Categorie toevoegen</button>
+                @error('name')<p role="alert" class="text-sm text-red-600">{{ $message }}</p>@enderror
+            </form>
+        </section>
+
+        <details class="overflow-hidden rounded-lg bg-white shadow-sm dark:bg-gray-800" @if($errors->has('title') || $errors->has('body')) open @endif>
+            <summary class="cursor-pointer list-none border-b border-gray-200 px-4 py-5 marker:content-none dark:border-gray-700 sm:px-6">
+                <span class="flex items-center justify-between gap-3">
+                    <span>
+                        <span class="block text-base font-semibold text-gray-900 dark:text-white">Spelregels beheren</span>
+                        <span class="mt-1 block text-sm text-gray-500 dark:text-gray-400">Maak categorieën aan en voeg per categorie regels toe. Bezoekers vinden ze op de aparte pagina Regels.</span>
+                    </span>
+                    <x-heroicon-o-chevron-down class="h-4 w-4 shrink-0 text-gray-500"/>
+                </span>
+            </summary>
+            <div class="space-y-4 p-4 sm:p-5">
                 @if($errors->has('title') || $errors->has('body'))
                     <div role="alert" class="rounded-md bg-red-50 p-3 text-sm text-red-700 dark:bg-red-500/10 dark:text-red-300">
                         Controleer de titel en uitleg van de regel. De titel mag maximaal 160 tekens zijn en de uitleg maximaal 5000.
                     </div>
                 @endif
-                <form action="{{ route('portal.admin.settings.site-rules.categories.store') }}" method="POST" class="flex flex-col gap-3 sm:flex-row">
-                    @csrf
-                    <label for="site-rule-category-name" class="sr-only">Nieuwe categorie</label>
-                    <input id="site-rule-category-name" name="name" required maxlength="100" placeholder="Nieuwe categorie, bijvoorbeeld Roleplay" class="min-w-0 flex-1 rounded-md border-0 bg-white px-3 py-2.5 text-sm text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 dark:bg-gray-700 dark:text-white dark:ring-gray-600">
-                    <button type="submit" class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500">Categorie toevoegen</button>
-                    @error('name')<p class="text-sm text-red-600">{{ $message }}</p>@enderror
-                </form>
-
                 @forelse($siteRuleCategories as $category)
-                    <article class="rounded-lg border border-gray-200 dark:border-gray-700">
-                        <div class="flex flex-wrap items-center justify-between gap-3 border-b border-gray-200 px-4 py-3 dark:border-gray-700">
-                            <h3 class="font-semibold text-gray-900 dark:text-white">{{ $category->name }}</h3>
-                            <form action="{{ route('portal.admin.settings.site-rules.categories.destroy', $category) }}" method="POST" onsubmit="return confirm('Verwijder deze categorie en alle regels erin?')">
+                    <details class="rounded-lg border border-gray-200 dark:border-gray-700" @if($errors->has('title') || $errors->has('body')) open @endif>
+                        <summary class="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 marker:content-none">
+                            <span class="min-w-0">
+                                <span class="block truncate font-semibold text-gray-900 dark:text-white">{{ $category->name }}</span>
+                                <span class="mt-1 block text-xs text-gray-500 dark:text-gray-400">{{ $category->rules->count() }} regels</span>
+                            </span>
+                            <x-heroicon-o-chevron-down class="h-4 w-4 shrink-0 text-gray-500"/>
+                        </summary>
+                        <div class="space-y-3 border-t border-gray-200 p-3 dark:border-gray-700 sm:p-4">
+                            <form action="{{ route('portal.admin.settings.site-rules.categories.destroy', $category) }}" method="POST" onsubmit="return confirm('Verwijder deze categorie en alle regels erin?')" class="flex justify-end">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="text-sm font-medium text-red-600 hover:text-red-500">Categorie verwijderen</button>
+                                <button type="submit" class="text-xs font-medium text-red-600 hover:text-red-500">Categorie verwijderen</button>
                             </form>
-                        </div>
-                        <div class="space-y-3 p-4">
                             @forelse($category->rules as $siteRule)
-                                <div class="rounded-md bg-gray-50 p-3 dark:bg-gray-700/50">
-                                    <form action="{{ route('portal.admin.settings.site-rules.update', $siteRule) }}" method="POST" class="grid gap-3">
+                                <details class="rounded-md bg-gray-50 dark:bg-gray-700/50">
+                                    <summary class="cursor-pointer list-none px-3 py-2.5 text-sm font-medium text-gray-800 marker:content-none dark:text-gray-100">{{ $siteRule->title }}</summary>
+                                    <form action="{{ route('portal.admin.settings.site-rules.update', $siteRule) }}" method="POST" class="grid gap-2 border-t border-gray-200 p-3 dark:border-gray-600">
                                         @csrf
                                         @method('PUT')
-                                        <input name="title" required maxlength="160" value="{{ $siteRule->title }}" aria-label="Titel van de regel" class="rounded-md border-0 bg-white px-3 py-2 text-sm text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 dark:bg-gray-700 dark:text-white dark:ring-gray-600">
-                                        <textarea name="body" required maxlength="5000" rows="2" aria-label="Uitleg van de regel" class="rounded-md border-0 bg-white px-3 py-2 text-sm text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 dark:bg-gray-700 dark:text-white dark:ring-gray-600">{{ $siteRule->body }}</textarea>
+                                        <input name="title" required maxlength="160" value="{{ $siteRule->title }}" aria-label="Titel van de regel" class="rounded-md border-0 bg-white px-3 py-1.5 text-sm text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 dark:bg-gray-700 dark:text-white dark:ring-gray-600">
+                                        <textarea name="body" required maxlength="5000" rows="2" aria-label="Uitleg van de regel" class="rounded-md border-0 bg-white px-3 py-1.5 text-sm text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 dark:bg-gray-700 dark:text-white dark:ring-gray-600">{{ $siteRule->body }}</textarea>
                                         <div class="flex flex-wrap justify-between gap-2">
-                                            <button type="submit" class="text-sm font-semibold text-indigo-600 hover:text-indigo-500">Wijzigingen opslaan</button>
-                                            <button form="delete-site-rule-{{ $siteRule->id }}" type="submit" class="text-sm font-medium text-red-600 hover:text-red-500">Verwijderen</button>
+                                            <button type="submit" class="text-xs font-semibold text-indigo-600 hover:text-indigo-500">Opslaan</button>
+                                            <button form="delete-site-rule-{{ $siteRule->id }}" type="submit" class="text-xs font-medium text-red-600 hover:text-red-500">Verwijderen</button>
                                         </div>
                                     </form>
                                     <form id="delete-site-rule-{{ $siteRule->id }}" action="{{ route('portal.admin.settings.site-rules.destroy', $siteRule) }}" method="POST">
                                         @csrf
                                         @method('DELETE')
                                     </form>
-                                </div>
+                                </details>
                             @empty
                                 <p class="text-sm text-gray-500 dark:text-gray-400">Nog geen regels in deze categorie.</p>
                             @endforelse
@@ -151,12 +165,12 @@
                                 <button type="submit" class="justify-self-start rounded-md bg-gray-900 px-4 py-2 text-sm font-semibold text-white hover:bg-gray-700 dark:bg-gray-600 dark:hover:bg-gray-500">Regel toevoegen</button>
                             </form>
                         </div>
-                    </article>
+                    </details>
                 @empty
                     <p class="rounded-lg bg-gray-50 p-4 text-sm text-gray-600 dark:bg-gray-700/50 dark:text-gray-300">Er zijn nog geen categorieën. Voeg hierboven je eerste categorie toe.</p>
                 @endforelse
             </div>
-        </section>
+        </details>
 
         <!-- Main Content -->
         <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">

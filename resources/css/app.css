@@ -350,7 +350,7 @@
 
     .site-page { --site-ink: #1c2824; --site-muted: #69756e; --site-paper: #f5f4ef; --site-white: #fffefa; --site-green: #315847; --site-green-dark: #19382e; --site-copper: #bd7658; --site-line: #e4e3da; min-height: 100vh; background: var(--site-paper); color: var(--site-ink); font-family: "Schibsted Grotesk", sans-serif; }
     .site-page *, .site-auth-page * { box-sizing: border-box; }
-    .site-header { position: relative; z-index: 20; display: flex; height: 82px; align-items: center; justify-content: space-between; gap: 25px; padding: 0 clamp(22px, 6vw, 94px); background: var(--site-paper); }
+    .site-header { position: sticky; top: 0; z-index: 40; display: flex; min-height: 82px; align-items: center; justify-content: space-between; gap: 25px; padding: 0 clamp(22px, 6vw, 94px); border-bottom: 1px solid rgb(228 227 218 / 75%); background: rgb(245 244 239 / 95%); backdrop-filter: blur(14px); }
     .site-brand { display: inline-flex; min-width: 0; align-items: center; gap: 11px; color: var(--site-ink); font-size: 15px; font-weight: 750; letter-spacing: -.035em; text-decoration: none; }
     .site-brand-mark { display: grid; width: 40px; height: 40px; flex: none; place-items: center; border: 1px solid #dfe3d8; border-radius: 12px; background: #e9eee5; }
     .site-brand-mark img { width: 25px; height: 25px; object-fit: contain; }
@@ -358,6 +358,7 @@
     .site-nav { display: flex; align-items: center; gap: 34px; }
     .site-nav a, .site-login-link { color: #58665e; font-size: 12px; font-weight: 600; text-decoration: none; transition: color 140ms ease; }
     .site-nav a:hover, .site-login-link:hover { color: var(--site-copper); }
+    .site-nav a.is-current { border-radius: 999px; padding: 8px 12px; background: #e8eee6; color: var(--site-green); }
     .site-account { display: flex; align-items: center; justify-content: flex-end; gap: 19px; }
     .site-button { display: inline-flex; min-height: 48px; align-items: center; justify-content: center; gap: 10px; border: 1px solid var(--site-green); border-radius: 7px; padding: 0 20px; background: var(--site-green); color: white; font-size: 12px; font-weight: 650; text-decoration: none; transition: background 150ms ease, border-color 150ms ease, transform 150ms ease, box-shadow 150ms ease; }
     .site-button:hover { transform: translateY(-1px); border-color: #244737; background: #244737; box-shadow: 0 7px 18px rgb(25 56 46 / 17%); }
@@ -508,6 +509,10 @@
     .site-rules-hero > p:not(.site-section-kicker) { max-width: 570px; margin-top: 17px; color: #69756e; font-size: 13px; line-height: 1.8; }
     .site-rules-hero .site-text-link { margin-top: 22px; }
     .site-rule-categories { display: grid; max-width: 1120px; gap: 18px; margin: 0 auto; padding: 56px 24px 90px; }
+    .site-rules-search { position: relative; display: flex; min-height: 54px; align-items: center; gap: 12px; border: 1px solid #dedfd6; border-radius: 9px; padding: 0 16px; background: var(--site-white); color: #78827a; box-shadow: 0 6px 20px rgb(35 49 40 / 4%); }
+    .site-rules-search input { min-width: 0; flex: 1; border: 0; outline: 0; background: transparent; color: var(--site-ink); font: inherit; font-size: 12px; }
+    .site-rules-search input::placeholder { color: #929a91; }
+    .site-rules-search-count { flex: none; color: #899288; font-size: 10px; }
     .site-rule-category { overflow: hidden; border: 1px solid #e4e3da; border-radius: 10px; background: var(--site-white); }
     .site-rule-category-heading { display: flex; align-items: center; gap: 14px; border-bottom: 1px solid #e8e7df; padding: 19px 24px; }
     .site-rule-category-heading > span { color: var(--site-copper); font-family: "JetBrains Mono", monospace; font-size: 9px; }
@@ -526,14 +531,48 @@
     .site-final-cta h2 { margin-top: 15px; color: var(--site-ink); font-size: clamp(36px, 5vw, 56px); font-weight: 650; letter-spacing: -.06em; line-height: 1.04; }
     .site-final-cta h2 span { color: var(--site-green); }
     .site-final-cta .site-button { margin-top: 23px; }
-    .site-footer { display: flex; min-height: 85px; align-items: center; justify-content: space-between; gap: 22px; padding: 16px clamp(22px, 6vw, 94px); border-top: 1px solid #e4e3da; background: var(--site-paper); }
+    .site-footer { display: flex; min-height: 100px; align-items: center; justify-content: space-between; gap: 24px; padding: 22px clamp(22px, 6vw, 94px); border-top: 1px solid #e4e3da; background: var(--site-paper); }
     .site-brand-footer { font-size: 12px; }
     .site-brand-footer .site-brand-mark { width: 34px; height: 34px; border-radius: 9px; }
     .site-brand-footer .site-brand-mark img { width: 21px; height: 21px; }
-    .site-footer > span { color: #7c857d; font-size: 9px; }
-    .site-footer > a:last-child { display: inline-flex; align-items: center; gap: 5px; color: var(--site-green); font-size: 9px; font-weight: 650; text-decoration: none; }
+    .site-footer-information { display: grid; max-width: 590px; gap: 5px; }
+    .site-footer-information strong { color: #526056; font-size: 10px; }
+    .site-footer-information span { color: #7c857d; font-size: 9px; line-height: 1.7; }
+    .site-footer-discord { display: inline-flex; min-height: 40px; flex: none; align-items: center; gap: 8px; border: 1px solid #315847; border-radius: 6px; padding: 0 12px; color: var(--site-green); font-size: 10px; font-weight: 700; text-decoration: none; transition: background 150ms ease, color 150ms ease; }
+    .site-footer-discord:hover { background: var(--site-green); color: white; }
 
-    .site-auth-page { --site-ink: #1c2824; --site-muted: #69756e; --site-green: #315847; --site-copper: #bd7658; min-height: 100vh; background: #f5f4ef; color: var(--site-ink); font-family: "Schibsted Grotesk", sans-serif; }
+    .site-chat { position: fixed; right: 22px; bottom: 20px; z-index: 70; display: grid; justify-items: end; gap: 12px; font-family: "Schibsted Grotesk", sans-serif; }
+    .site-chat-launcher { position: relative; display: inline-flex; min-height: 52px; align-items: center; gap: 10px; border: 0; border-radius: 999px; padding: 0 18px; background: #315847; color: white; box-shadow: 0 10px 32px rgb(25 56 46 / 25%); cursor: pointer; font-size: 12px; font-weight: 700; }
+    .site-chat-launcher:hover { background: #244737; }
+    .site-chat-launcher > i, .site-chat-presence i { width: 8px; height: 8px; flex: none; border-radius: 50%; }
+    .site-chat-launcher > i.is-online, .site-chat-presence i.is-online { background: #8bc59a; box-shadow: 0 0 0 3px rgb(139 197 154 / 19%); }
+    .site-chat-launcher > i.is-offline, .site-chat-presence i.is-offline { background: #dbb078; }
+    .site-chat-panel { display: flex; width: min(390px, calc(100vw - 28px)); max-height: min(620px, calc(100vh - 105px)); flex-direction: column; overflow: hidden; border: 1px solid #e0e2d9; border-radius: 14px; background: #fffefa; color: #1c2824; box-shadow: 0 20px 70px rgb(20 35 27 / 22%); }
+    .site-chat-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px 18px; background: #19382e; color: #f8f6ee; }
+    .site-chat-header strong { display: block; font-size: 13px; }
+    .site-chat-presence { display: flex; align-items: center; gap: 7px; margin-top: 5px; color: #c1cec4; font-size: 10px; }
+    .site-chat-close { display: grid; width: 30px; height: 30px; place-items: center; border: 0; border-radius: 50%; background: rgb(255 255 255 / 10%); color: white; cursor: pointer; font-size: 23px; line-height: 1; }
+    .site-chat-staff, .site-chat-offline-note { padding: 11px 16px; background: #f1f3eb; color: #5e6d61; font-size: 10px; line-height: 1.6; }
+    .site-chat-staff strong { color: #315847; }
+    .site-chat-error { margin: 9px 13px 0; border-radius: 6px; padding: 9px 11px; background: #fff0ed; color: #a53d32; font-size: 10px; }
+    .site-chat-messages { display: flex; min-height: 110px; flex: 1; flex-direction: column; gap: 10px; overflow-y: auto; padding: 14px; }
+    .site-chat-message { max-width: 88%; align-self: flex-start; border: 1px solid #e7e7df; border-radius: 9px 9px 9px 2px; padding: 9px 11px; background: white; }
+    .site-chat-message.is-staff { align-self: flex-end; border-color: #d7e3d6; border-radius: 9px 9px 2px 9px; background: #eef4ea; }
+    .site-chat-message > div { display: flex; justify-content: space-between; gap: 16px; color: #879087; font-size: 9px; }
+    .site-chat-message > div strong { color: #506056; }
+    .site-chat-message p { margin-top: 4px; overflow-wrap: anywhere; color: #35433a; font-size: 11px; line-height: 1.6; white-space: pre-wrap; }
+    .site-chat-form { display: grid; gap: 7px; padding: 13px; border-top: 1px solid #e7e7df; }
+    .site-chat-form label { color: #56635a; font-size: 10px; font-weight: 650; }
+    .site-chat-form input, .site-chat-form textarea { width: 100%; border: 1px solid #dcdfd6; border-radius: 6px; padding: 9px 10px; outline: 0; background: white; color: #1c2824; font: inherit; font-size: 11px; resize: vertical; }
+    .site-chat-form input:focus, .site-chat-form textarea:focus { border-color: #315847; box-shadow: 0 0 0 3px rgb(49 88 71 / 10%); }
+    .site-chat-submit { justify-self: end; border: 0; border-radius: 6px; padding: 9px 14px; background: #315847; color: white; cursor: pointer; font-size: 10px; font-weight: 700; }
+    .site-chat-submit:disabled { opacity: .55; cursor: wait; }
+    .site-chat-reply-form { grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: 9px; }
+    .site-chat-reply-form textarea { grid-column: 1; }
+    .site-chat-reply-form .site-chat-submit { grid-column: 2; grid-row: 1; align-self: end; }
+
+    .site-auth-page { --site-ink: #1c2824; --site-muted: #69756e; --site-paper: #f5f4ef; --site-white: #fffefa; --site-green: #315847; --site-green-dark: #19382e; --site-copper: #bd7658; --site-line: #e4e3da; min-height: 100vh; background: #f5f4ef; color: var(--site-ink); font-family: "Schibsted Grotesk", sans-serif; }
+    .site-auth-header { position: sticky; height: auto; min-height: 76px; }
     .site-auth-back { position: absolute; top: 25px; left: 30px; z-index: 2; display: inline-flex; align-items: center; gap: 7px; color: #66736b; font-size: 10px; font-weight: 600; text-decoration: none; }
     .site-auth-back:hover { color: var(--site-green); }
     .site-auth-layout { display: grid; min-height: 100vh; grid-template-columns: minmax(340px, .88fr) minmax(0, 1.12fr); }
@@ -593,11 +632,13 @@
         .site-section { padding-top: 78px; padding-bottom: 78px; }
     }
     @media (max-width: 640px) {
-        .site-header { height: 68px; gap: 10px; padding-right: 17px; padding-left: 17px; }
+        .site-header { min-height: 68px; height: auto; flex-wrap: wrap; gap: 7px 10px; padding: 9px 17px 0; }
         .site-brand { gap: 8px; font-size: 12px; }
         .site-brand-mark { width: 35px; height: 35px; }
         .site-brand-mark img { width: 22px; height: 22px; }
-        .site-nav { display: none; }
+        .site-nav { display: flex; width: 100%; order: 3; justify-content: center; gap: 8px; overflow-x: auto; padding: 1px 0 10px; }
+        .site-nav a { flex: none; font-size: 9px; }
+        .site-nav a.is-current { padding: 6px 9px; }
         .site-account { gap: 10px; }
         .site-account-trigger { min-height: 38px; padding-right: 8px; }
         .site-account-name { max-width: 93px; font-size: 9px; }
@@ -643,11 +684,16 @@
         .site-auth-main { min-height: 100vh; padding: 72px 18px 25px; }
         .site-auth-card { padding: 27px 22px; }
         .site-auth-card-heading h1 { font-size: 26px; }
-        .site-account-page { min-height: calc(100vh - 68px); padding: 25px 17px 58px; }
+        .site-account-page { min-height: calc(100vh - 100px); padding: 25px 17px 58px; }
         .site-account-content > .site-section-kicker { margin-top: 30px; }
         .site-account-card { padding: 18px; }
         .site-account-identity { grid-template-columns: 1fr; }
         .site-account-form .site-button { width: 100%; }
+        .site-footer { align-items: flex-start; flex-direction: column; gap: 15px; }
+        .site-footer-information { order: 3; }
+        .site-chat { right: 14px; bottom: 14px; }
+        .site-chat-launcher { min-height: 47px; padding: 0 15px; }
+        .site-auth-header { min-height: 104px; }
     }
 
     @media (prefers-reduced-motion: reduce) {

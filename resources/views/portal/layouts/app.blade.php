@@ -38,6 +38,30 @@
         document.documentElement.classList.toggle('dark', this.darkMode);
     }
 }">
+    @if (auth()->user()->can('manage-live-chat'))
+        @push('scripts')
+            <script>
+                (() => {
+                    const url = @js(route('portal.admin.live-chat.presence'));
+                    const token = document.querySelector('meta[name="csrf-token"]').content;
+                    const heartbeat = async () => {
+                        if (document.visibilityState !== 'visible') return;
+                        try {
+                            const response = await fetch(url, {
+                                method: 'POST',
+                                headers: { Accept: 'application/json', 'X-CSRF-TOKEN': token },
+                            });
+                            if (!response.ok) console.error('Livechat-aanwezigheid kon niet worden bijgewerkt.');
+                        } catch (error) {
+                            console.error('Livechat-aanwezigheid kon niet worden bijgewerkt.', error);
+                        }
+                    };
+                    heartbeat();
+                    window.setInterval(heartbeat, 25000);
+                })();
+            </script>
+        @endpush
+    @endif
     @include('portal.layouts.partials.sidebar')
 
     <div class="omt-app-frame min-h-full lg:pl-[17rem]">

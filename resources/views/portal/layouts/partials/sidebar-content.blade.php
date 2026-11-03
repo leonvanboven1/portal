@@ -86,7 +86,7 @@
         </ul>
     @endif
 
-    @if ($can('manage-users', 'manage-plots', 'manage-roles', 'manage-settings', 'manage-appearance', 'manage-education'))
+    @if ($can('manage-users', 'manage-plots', 'manage-roles', 'manage-settings', 'manage-appearance', 'manage-education', 'manage-live-chat'))
         <div class="{{ $heading }}">Beheer</div>
         <ul role="list" class="space-y-0.5">
             @if ($can('manage-users'))
@@ -106,6 +106,9 @@
             @endif
             @if ($can('manage-appearance'))
                 <x-portal.nav-link :href="route('portal.admin.branding.edit')" :active="request()->routeIs('portal.admin.branding.*')" icon="paint-brush">Uiterlijk & logo</x-portal.nav-link>
+            @endif
+            @if ($can('manage-live-chat'))
+                <x-portal.nav-link :href="route('portal.admin.live-chat.index')" :active="request()->routeIs('portal.admin.live-chat.*')" icon="chat-bubble-left-right">Livechat</x-portal.nav-link>
             @endif
         </ul>
     @endif

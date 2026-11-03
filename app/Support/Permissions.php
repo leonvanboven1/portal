@@ -35,6 +35,7 @@ final class Permissions
         'manage-roles' => ['Rollen beheren', 'Rollen aanmaken, bewerken en verwijderen.', self::MANAGE, null],
         'manage-settings' => ['Instellingen', 'Features aan- en uitzetten en de instellingen van vergunningen en bedrijven.', self::MANAGE, null],
         'manage-appearance' => ['Uiterlijk', 'De kleur en het logo van het portaal aanpassen.', self::MANAGE, null],
+        'manage-live-chat' => ['Livechat beheren', 'Publieke livechatgesprekken beantwoorden en bezoekers helpen.', self::MANAGE, null],
         'manage-plots' => ['Plots beheren', 'Alle plots bekijken en eigenaren en leden beheren.', self::MANAGE, 'plots'],
         'manage-broker' => ['Makelaar beheren', 'Plots namens de server verkopen en verhuren, en listings van de markt halen.', self::MANAGE, 'broker'],
         'manage-permits' => ['Vergunningaanvragen', 'Vergunningaanvragen behandelen.', self::MANAGE, 'permits'],

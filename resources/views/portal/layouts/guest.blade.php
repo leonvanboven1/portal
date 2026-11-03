@@ -3,6 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title') — {{ config('app.name', 'Minetopia Panel') }}</title>
     @unless (\App\Models\BrandingSetting::current()->logo_path)
         <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
@@ -27,7 +28,16 @@
         document.documentElement.classList.toggle('dark', this.darkMode);
     }
 }">
-    <a class="site-auth-back" href="{{ route('site.home') }}"><x-heroicon-o-arrow-left class="h-4 w-4"/> Terug naar de website</a>
+    <header class="site-header site-auth-header">
+        <a href="{{ route('site.home') }}" class="site-brand" aria-label="Vunex — home">
+            <span class="site-brand-mark">
+                <img src="{{ \App\Models\BrandingSetting::current()->logoUrl() }}" alt="" @class(['omt-pixel' => \App\Models\BrandingSetting::current()->isLogoPixelated()])>
+            </span>
+            <span>Vunex<small>MINECRAFT ROLEPLAY</small></span>
+        </a>
+        @include('site.partials.navigation')
+        @include('site.partials.account-menu')
+    </header>
     <div class="site-auth-layout">
         <aside class="site-auth-aside">
             <a href="{{ route('site.home') }}" class="site-brand site-auth-brand">
@@ -72,5 +82,6 @@
             <p class="site-auth-legal">Door verder te gaan, maak je deel uit van {{ config('app.name') }}.</p>
         </main>
     </div>
+    @include('site.partials.footer')
 </body>
 </html>
