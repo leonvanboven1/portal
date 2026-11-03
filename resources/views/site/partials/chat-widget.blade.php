@@ -1,9 +1,9 @@
 <div
     class="site-chat"
     x-data="siteChat({
-        statusUrl: @js(route('site-chat.status')),
-        startUrl: @js(route('site-chat.start')),
-        sendUrl: @js(route('site-chat.send')),
+        statusUrl: @js(route('site-chat.status', [], false)),
+        startUrl: @js(route('site-chat.start', [], false)),
+        sendUrl: @js(route('site-chat.send', [], false)),
         csrfToken: @js(csrf_token()),
     })"
 >

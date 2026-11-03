@@ -6,10 +6,10 @@
 @section('content')
     <div
         x-data="staffChat({
-            conversationsUrl: @js(route('portal.admin.live-chat.conversations')),
-            messagesUrl: @js(route('portal.admin.live-chat.messages', ['conversationId' => '__ID__'])),
-            replyUrl: @js(route('portal.admin.live-chat.reply', ['conversationId' => '__ID__'])),
-            closeUrl: @js(route('portal.admin.live-chat.close', ['conversationId' => '__ID__'])),
+            conversationsUrl: @js(route('portal.admin.live-chat.conversations', [], false)),
+            messagesUrl: @js(route('portal.admin.live-chat.messages', ['conversationId' => '__ID__'], false)),
+            replyUrl: @js(route('portal.admin.live-chat.reply', ['conversationId' => '__ID__'], false)),
+            closeUrl: @js(route('portal.admin.live-chat.close', ['conversationId' => '__ID__'], false)),
         })"
         class="grid min-h-[65vh] gap-5 lg:grid-cols-[320px_minmax(0,1fr)]"
     >

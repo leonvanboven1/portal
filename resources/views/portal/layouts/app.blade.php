@@ -42,7 +42,7 @@
         @push('scripts')
             <script>
                 (() => {
-                    const url = @js(route('portal.admin.live-chat.presence'));
+                    const url = @js(route('portal.admin.live-chat.presence', [], false));
                     const token = document.querySelector('meta[name="csrf-token"]').content;
                     const heartbeat = async () => {
                         if (document.visibilityState !== 'visible') return;
