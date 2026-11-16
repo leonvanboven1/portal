@@ -1,6 +1,8 @@
-import './bootstrap';
 import Alpine from 'alpinejs'
-import './minecraft-preview'
+
+if (document.getElementById('minecraft_username')) {
+    import('./minecraft-preview').catch((error) => console.error('De Minecraft-preview kon niet worden geladen.', error))
+}
 
 window.Alpine = Alpine
 
@@ -29,6 +31,21 @@ Alpine.data('rulesSearch', () => ({
     },
 }))
 
+Alpine.data('copyServerAddress', () => ({
+    copied: false,
+    copyError: false,
+    async copy() {
+        try {
+            await navigator.clipboard.writeText('play.vunex.nl')
+            this.copied = true
+            this.copyError = false
+            window.setTimeout(() => { this.copied = false }, 1800)
+        } catch {
+            this.copyError = true
+        }
+    },
+}))
+
 Alpine.data('siteChat', (config) => ({
     ...config,
     open: false,
@@ -42,10 +59,20 @@ Alpine.data('siteChat', (config) => ({
     timer: null,
     init() {
         this.refresh()
-        this.timer = window.setInterval(() => this.refresh(), 4000)
+        this.timer = window.setInterval(() => this.refresh(), 30000)
     },
     destroy() {
         window.clearInterval(this.timer)
+    },
+    toggleChat() {
+        this.open = !this.open
+        window.clearInterval(this.timer)
+        if (this.open) {
+            this.refresh()
+            this.timer = window.setInterval(() => this.refresh(), 4000)
+        } else {
+            this.timer = window.setInterval(() => this.refresh(), 30000)
+        }
     },
     async refresh() {
         try {

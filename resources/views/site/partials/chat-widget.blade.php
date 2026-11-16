@@ -54,7 +54,7 @@
         </form>
     </section>
 
-    <button type="button" class="site-chat-launcher" @click="open = !open" :aria-expanded="open" aria-label="Open Vunex livechat">
+    <button type="button" class="site-chat-launcher" @click="toggleChat()" :aria-expanded="open" aria-label="Open Vunex livechat">
         <x-heroicon-o-chat-bubble-left-right class="h-6 w-6"/>
         <span>Livechat</span>
         <i :class="available ? 'is-online' : 'is-offline'"></i>

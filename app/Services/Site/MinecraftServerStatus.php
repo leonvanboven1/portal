@@ -14,9 +14,9 @@ class MinecraftServerStatus
      */
     public function get(): array
     {
-        return Cache::remember('site.minecraft-status.v1', now()->addMinute(), function (): array {
+        return Cache::flexible('site.minecraft-status.v1', [60, 3600], function (): array {
             try {
-                $response = Http::timeout(3)->get('https://api.mcsrvstat.us/3/play.vunex.nl');
+                $response = Http::connectTimeout(0.5)->timeout(1)->get('https://api.mcsrvstat.us/3/play.vunex.nl');
             } catch (ConnectionException $exception) {
                 Log::warning('Vunex server status could not be reached.', ['exception' => $exception->getMessage()]);
 

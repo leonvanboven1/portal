@@ -38,7 +38,15 @@
                     @endauth
                 </div>
                 <div class="site-hero-note"><span class="site-status-dot"></span> Jouw personage. Jouw keuzes. Jouw verhaal.</div>
-                <div class="site-server-address"><span>SERVER IP</span><code>play.vunex.nl</code></div>
+                <div class="site-server-address" x-data="copyServerAddress">
+                    <span>SERVER IP</span>
+                    <code>play.vunex.nl</code>
+                    <button type="button" class="site-server-copy" @click="copy()" :aria-label="copied ? 'Serveradres gekopieerd' : 'Kopieer serveradres'">
+                        <x-heroicon-o-clipboard-document class="h-4 w-4"/>
+                        <span x-text="copied ? 'Gekopieerd' : 'Kopieer'"></span>
+                    </button>
+                    <span class="sr-only" role="status" x-show="copyError">Kopiëren is niet gelukt. Selecteer het serveradres en kopieer het handmatig.</span>
+                </div>
             </div>
             <div class="site-hero-art">
                 <div class="site-art-sun"></div>
@@ -46,7 +54,7 @@
                 <div class="site-art-orbit site-art-orbit-two"></div>
                 <div class="site-art-card site-art-card-main">
                     @if($content->hero_image_path)
-                        <img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($content->hero_image_path) }}" alt="" class="site-art-photo">
+                        <img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($content->hero_image_path) }}" alt="" class="site-art-photo" fetchpriority="high" decoding="async">
                         <div class="site-art-photo-shade"></div>
                     @else
                         <span class="site-art-card-kicker">VUNEX · JOUW NIEUWE WERELD</span>
@@ -99,7 +107,7 @@
                 <p>Een levende roleplaywereld met systemen die jouw keuzes echt laten meetellen.</p>
             </div>
             @if($content->unique_image_path)
-                <img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($content->unique_image_path) }}" alt="De wereld van Vunex" class="site-unique-photo">
+                <img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($content->unique_image_path) }}" alt="De wereld van Vunex" class="site-unique-photo" loading="lazy" decoding="async">
             @endif
             <div class="site-feature-grid">
                 <article class="site-feature-card">
@@ -146,7 +154,7 @@
                 </div>
                 <div class="site-steps-art">
                     @if($content->steps_image_path)
-                        <img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($content->steps_image_path) }}" alt="Bouw jouw avontuur op Vunex" class="site-steps-photo">
+                        <img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($content->steps_image_path) }}" alt="Bouw jouw avontuur op Vunex" class="site-steps-photo" loading="lazy" decoding="async">
                     @else
                         <div class="site-steps-placeholder"><x-heroicon-o-map class="h-12 w-12"/><span>JOUW VERHAAL BEGINT HIER</span></div>
                     @endif

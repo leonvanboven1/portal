@@ -119,12 +119,8 @@ it('lets a signed-in user update email and password without changing their Minec
 
 it('uses the uploaded appearance logo across the public website', function () {
     Storage::fake('public');
-    Cache::put('site.minecraft-status.v1', [
-        'available' => false,
-        'online' => false,
-        'players' => null,
-        'max_players' => null,
-    ], now()->addMinute());
+    Cache::forget('site.minecraft-status.v1');
+    Http::fake(['*mcsrvstat.us/*' => Http::response(['online' => false])]);
     $path = UploadedFile::fake()->image('vunex-logo.png')->store('branding', 'public');
     $branding = BrandingSetting::create([
         'accent_color' => BrandingSetting::DEFAULT_ACCENT,

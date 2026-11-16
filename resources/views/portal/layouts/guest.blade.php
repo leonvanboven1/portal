@@ -10,7 +10,8 @@
     @endunless
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400..800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400..800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400..800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet"></noscript>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <script>
         if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
@@ -40,14 +41,15 @@
     </header>
     <div class="site-auth-layout">
         <aside class="site-auth-aside">
-            <a href="{{ route('site.home') }}" class="site-brand site-auth-brand">
-                <span class="site-brand-mark"><img src="{{ asset('images/brand/logo.svg') }}" alt=""></span>
-                <span>{{ config('app.name') }}<small>MINECRAFT ROLEPLAY</small></span>
-            </a>
             <div class="site-auth-aside-copy">
                 <span class="site-eyebrow"><span></span> DE STAD IS VAN JOU</span>
-                <h2>Fijn dat je<br>weer <em>terug bent.</em></h2>
-                <p>Log in en pak jouw verhaal weer op. Je volgende avontuur is dichterbij dan je denkt.</p>
+                @if (request()->routeIs('register'))
+                    <h2>Jouw verhaal<br>begint <em>hier.</em></h2>
+                    <p>Maak je account aan en ontdek welke plek jouw personage in Vunex krijgt.</p>
+                @else
+                    <h2>Fijn dat je<br>weer <em>terug bent.</em></h2>
+                    <p>Log in en pak jouw verhaal weer op. Je volgende avontuur is dichterbij dan je denkt.</p>
+                @endif
             </div>
             <div class="site-auth-art" aria-hidden="true">
                 <span></span><span></span><span></span><span></span><span></span>
@@ -59,7 +61,7 @@
             <div class="site-auth-card">
                 <div class="site-auth-card-heading">
                     <span class="site-auth-card-mark"><x-heroicon-o-lock-closed class="h-5 w-5"/></span>
-                    <p class="site-section-kicker">WELKOM TERUG</p>
+                    <p class="site-section-kicker">@yield('kicker', 'WELKOM TERUG')</p>
                     <h1>@yield('header')</h1>
                     @hasSection('subheader')
                         <p class="site-auth-subheader">@yield('subheader')</p>
